@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="swiftdrop-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1d4ed8" />
+      <stop offset="100%" stop-color="#2563eb" />
+    </linearGradient>
+  </defs>
+  <!-- Background Rounded Rect -->
+  <rect width="64" height="64" rx="14" fill="url(#swiftdrop-grad)" />
+  
+  <!-- Speed Lines -->
+  <path d="M12 24h10M10 32h8M14 40h6" stroke="#93c5fd" stroke-width="3" stroke-linecap="round" />
+
+  <!-- Delivery Truck Body -->
+  <path d="M22 20h18v18H22z" fill="#ffffff" />
+  <path d="M40 26h8l5 6v6H40z" fill="#38bdf8" />
+  
+  <!-- Package detail on cargo -->
+  <path d="M26 25h10v8H26z" fill="#dbeafe" />
+  <path d="M31 25v8M26 29h10" stroke="#2563eb" stroke-width="1.5" />
+
+  <!-- Cabin Window -->
+  <path d="M42 28h5l3 4h-8z" fill="#ffffff" />
+
+  <!-- Truck Wheels -->
+  <circle cx="28" cy="42" r="4.5" fill="#1e293b" />
+  <circle cx="28" cy="42" r="2" fill="#ffffff" />
+  <circle cx="47" cy="42" r="4.5" fill="#1e293b" />
+  <circle cx="47" cy="42" r="2" fill="#ffffff" />
+</svg>

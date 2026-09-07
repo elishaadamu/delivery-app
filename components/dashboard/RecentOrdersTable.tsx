@@ -217,7 +217,7 @@ export default function RecentOrdersTable({
 
                     {/* Amount */}
                     <td className="py-3 px-3 font-semibold text-gray-900">
-                      ${ord.payment.total.toFixed(2)}
+                      ₦{ord.payment.total.toLocaleString()}
                       <span className="block text-[10px] text-gray-500 font-normal capitalize">
                         {ord.payment.method.replace('_', ' ')}
                       </span>
@@ -308,7 +308,7 @@ export default function RecentOrdersTable({
 
               <div className="pt-2 flex justify-between items-center text-sm font-bold text-gray-900">
                 <span>Total Paid</span>
-                <span className="text-blue-600">${receiptOrder.payment.total.toFixed(2)}</span>
+                <span className="text-blue-600">₦{receiptOrder.payment.total.toLocaleString()}</span>
               </div>
             </div>
 

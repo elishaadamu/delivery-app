@@ -36,7 +36,7 @@ export default function ChatSupportWidget({
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping, isOpen]);
 
-  const whatsappNumber = '15558902200';
+  const whatsappNumber = '2348034567890';
   const orderRef = activeOrder ? `Order #${activeOrder.trackingNumber}` : 'my shipments';
   const prefilledWhatsappText = encodeURIComponent(
     `Hello SwiftDrop Support! I need assistance regarding ${orderRef}.`
@@ -64,7 +64,7 @@ export default function ChatSupportWidget({
 
       if (lower.includes('where') || lower.includes('status') || lower.includes('driver')) {
         if (activeOrder) {
-          botResponse = `Order ${activeOrder.trackingNumber} is currently "${activeOrder.status.replace('_', ' ').toUpperCase()}". Your courier ${activeOrder.driver?.name || 'Marcus'} is scheduled to arrive around ${activeOrder.estimatedDelivery}.`;
+          botResponse = `Order ${activeOrder.trackingNumber} is currently "${activeOrder.status.replace('_', ' ').toUpperCase()}". Your courier ${activeOrder.driver?.name || 'Babajide'} is scheduled to arrive around ${activeOrder.estimatedDelivery}.`;
         } else {
           botResponse = 'All your active deliveries are on schedule! You can view the live status right on your dashboard.';
         }
@@ -191,7 +191,7 @@ export default function ChatSupportWidget({
                   <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
                     <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z" />
                   </svg>
-                  <span>Open WhatsApp (+1 555-890-2200)</span>
+                  <span>Open WhatsApp (+234 803 456 7890)</span>
                   <ExternalLink className="w-3 h-3" />
                 </a>
               </div>

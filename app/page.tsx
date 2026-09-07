@@ -46,9 +46,9 @@ export default function LoginPage() {
         const stored = localStorage.getItem('swiftdrop_user');
         if (!stored) {
           const defaultUser = {
-            firstName: 'Sarah',
-            lastName: 'Jenkins',
-            phone: '+1 (555) 349-8821',
+            firstName: 'Chidinma',
+            lastName: 'Adeleke',
+            phone: '0803 456 7890',
             email: email.trim().toLowerCase(),
           };
           localStorage.setItem('swiftdrop_user', JSON.stringify(defaultUser));
@@ -65,7 +65,7 @@ export default function LoginPage() {
   };
 
   const handleFillDemo = () => {
-    setEmail('sarah.jenkins@example.com');
+    setEmail('chidinma.adeleke@example.com');
     setPassword('DeliverFast#2026');
     setLoginError('');
   };
@@ -140,7 +140,7 @@ export default function LoginPage() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="sarah.jenkins@example.com"
+                    placeholder="chidinma.adeleke@example.com"
                     className="w-full pl-9 pr-3.5 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-colors"
                   />
                 </div>
@@ -227,7 +227,7 @@ export default function LoginPage() {
                   className="w-full py-2 px-3 bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs font-medium rounded-lg border border-gray-200 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                 >
                   <UserCheck className="w-3.5 h-3.5 text-blue-600" />
-                  <span>Fill Demo Credentials (Sarah Jenkins)</span>
+                  <span>Fill Demo Credentials (Chidinma Adeleke)</span>
                 </button>
               </div>
 

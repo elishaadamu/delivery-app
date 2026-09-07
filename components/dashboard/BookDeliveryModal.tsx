@@ -37,12 +37,12 @@ export default function BookDeliveryModal({
   // Step 1: Sender Details
   const [senderName, setSenderName] = useState(`${user.firstName} ${user.lastName}`);
   const [senderPhone, setSenderPhone] = useState(user.phone);
-  const [pickupAddress, setPickupAddress] = useState('742 Evergreen Terrace');
-  const [pickupApt, setPickupApt] = useState('Suite 4B');
-  const [pickupCity, setPickupCity] = useState('Austin, TX');
-  const [pickupPostal, setPickupPostal] = useState('78701');
+  const [pickupAddress, setPickupAddress] = useState('14 Admiralty Way, Lekki Phase 1');
+  const [pickupApt, setPickupApt] = useState('Block B, Flat 4');
+  const [pickupCity, setPickupCity] = useState('Lagos');
+  const [pickupPostal, setPickupPostal] = useState('105102');
   const [pickupTimeWindow, setPickupTimeWindow] = useState('Immediate / ASAP (Next 45 mins)');
-  const [pickupNotes, setPickupNotes] = useState('Gate code #4490, 2nd floor');
+  const [pickupNotes, setPickupNotes] = useState('Call security gate on arrival, flat is on 2nd floor');
 
   // Step 2: Receiver Details & Package
   const [receiverName, setReceiverName] = useState('');
@@ -50,7 +50,7 @@ export default function BookDeliveryModal({
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [deliveryApt, setDeliveryApt] = useState('');
   const [deliveryCity, setDeliveryCity] = useState('');
-  const [deliveryPostal, setDeliveryPostal] = useState('75201');
+  const [deliveryPostal, setDeliveryPostal] = useState('100271');
   const [deliveryInstructions, setDeliveryInstructions] = useState('Call receiver on arrival');
 
   const [packageCategory, setPackageCategory] = useState<'documents' | 'small_box' | 'medium_box' | 'cargo'>('small_box');
@@ -61,7 +61,7 @@ export default function BookDeliveryModal({
 
   // Step 3: Payment
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'apple_pay' | 'bank_transfer' | 'cod'>('card');
-  const [cardNumber, setCardNumber] = useState('4242 •••• •••• 4242');
+  const [cardNumber, setCardNumber] = useState('5399 •••• •••• 4242');
   const [cardExpiry, setCardExpiry] = useState('08/28');
   const [cardCvc, setCardCvc] = useState('321');
   const [cardName, setCardName] = useState(`${user.firstName} ${user.lastName}`);
@@ -73,21 +73,19 @@ export default function BookDeliveryModal({
   const [isBooking, setIsBooking] = useState(false);
   const [bookingError, setBookingError] = useState('');
 
-  if (!isOpen) return null;
-
-  // Pricing calculations
+  // Pricing calculations (in Naira ₦)
   const weightNum = parseFloat(packageWeight) || 1;
-  const baseFare = 15.00;
-  const distanceFare = 12.50;
-  const weightFare = Math.round(weightNum * 2.2 * 100) / 100;
-  const insurance = isFragile ? 5.00 : 2.50;
+  const baseFare = 2500;
+  const distanceFare = 3500;
+  const weightFare = Math.round(weightNum * 600);
+  const insurance = isFragile ? 1000 : 500;
   const subtotal = baseFare + distanceFare + weightFare + insurance;
   const total = Math.max(0, subtotal - discountApplied);
 
   const applyPromo = () => {
     if (promoCode.trim().toUpperCase() === 'WELCOME20' || promoCode.trim().toUpperCase() === 'EXPRESS5') {
-      setDiscountApplied(5.00);
-      setPromoSuccessMsg('Promo code applied: $5.00 discount.');
+      setDiscountApplied(1000);
+      setPromoSuccessMsg('Promo code applied: ₦1,000 discount.');
     } else {
       setBookingError('Invalid promo code. Try "WELCOME20".');
       setTimeout(() => setBookingError(''), 3000);
@@ -120,94 +118,96 @@ export default function BookDeliveryModal({
     setBookingError('');
     setIsBooking(true);
 
-    const generatedTracking = `TRK-${Math.floor(100000 + Math.random() * 900000)}`;
-
-    const newOrder: DeliveryOrder = {
-      id: `ord-${Date.now()}`,
-      trackingNumber: generatedTracking,
-      status: 'confirmed',
-      createdAt: 'Just now',
-      estimatedDelivery: 'Today in ~2 hours',
-      sender: {
-        fullName: senderName,
-        phone: senderPhone,
-        address: pickupAddress,
-        apartment: pickupApt,
-        city: pickupCity,
-        postalCode: pickupPostal || '78701',
-        pickupTimeWindow,
-        pickupNotes,
-      },
-      receiver: {
-        fullName: receiverName,
-        phone: receiverPhone,
-        address: deliveryAddress,
-        apartment: deliveryApt,
-        city: deliveryCity,
-        postalCode: deliveryPostal || '75201',
-        deliveryInstructions,
-      },
-      packageInfo: {
-        category: packageCategory,
-        weight: weightNum,
-        description: packageDesc,
-        isFragile,
-        requiresSignature,
-      },
-      payment: {
-        method: paymentMethod,
-        baseFare,
-        distanceFare,
-        weightFare,
-        insurance,
-        discount: discountApplied,
-        total,
-        promoCode: discountApplied > 0 ? promoCode : undefined,
-        cardNumberMasked: paymentMethod === 'card' ? '•••• 4242' : undefined,
-      },
-      driver: sampleDriver,
-      timeline: [
-        {
-          status: 'confirmed',
-          title: 'Order Confirmed',
-          description: 'Payment authorized and dispatch courier assigned.',
-          timestamp: 'Just now',
-          completed: true,
-          current: true,
-        },
-        {
-          status: 'in_transit',
-          title: 'In Transit',
-          description: 'Courier en route to pick up package from sender.',
-          timestamp: 'Pending',
-          completed: false,
-          current: false,
-        },
-        {
-          status: 'out_for_delivery',
-          title: 'Out for Delivery',
-          description: 'Package in final transit to delivery location.',
-          timestamp: 'Pending',
-          completed: false,
-          current: false,
-        },
-        {
-          status: 'delivered',
-          title: 'Delivered',
-          description: 'Package handed over with digital proof.',
-          timestamp: 'Pending',
-          completed: false,
-          current: false,
-        },
-      ],
-    };
-
     setTimeout(() => {
+      const generatedTracking = `TRK-${Math.floor(100000 + Math.random() * 900000)}`;
+
+      const newOrder: DeliveryOrder = {
+        id: `ord-${Date.now()}`,
+        trackingNumber: generatedTracking,
+        status: 'confirmed',
+        createdAt: 'Just now',
+        estimatedDelivery: 'Today in ~2 hours',
+        sender: {
+          fullName: senderName,
+          phone: senderPhone,
+          address: pickupAddress,
+          apartment: pickupApt,
+          city: pickupCity,
+          postalCode: pickupPostal || '105102',
+          pickupTimeWindow,
+          pickupNotes,
+        },
+        receiver: {
+          fullName: receiverName,
+          phone: receiverPhone,
+          address: deliveryAddress,
+          apartment: deliveryApt,
+          city: deliveryCity,
+          postalCode: deliveryPostal || '100271',
+          deliveryInstructions,
+        },
+        packageInfo: {
+          category: packageCategory,
+          weight: weightNum,
+          description: packageDesc,
+          isFragile,
+          requiresSignature,
+        },
+        payment: {
+          method: paymentMethod,
+          baseFare,
+          distanceFare,
+          weightFare,
+          insurance,
+          discount: discountApplied,
+          total,
+          promoCode: discountApplied > 0 ? promoCode : undefined,
+          cardNumberMasked: paymentMethod === 'card' ? '•••• 4242' : undefined,
+        },
+        driver: sampleDriver,
+        timeline: [
+          {
+            status: 'confirmed',
+            title: 'Order Confirmed',
+            description: 'Payment authorized and dispatch courier assigned.',
+            timestamp: 'Just now',
+            completed: true,
+            current: true,
+          },
+          {
+            status: 'in_transit',
+            title: 'In Transit',
+            description: 'Courier en route to pick up package from sender.',
+            timestamp: 'Pending',
+            completed: false,
+            current: false,
+          },
+          {
+            status: 'out_for_delivery',
+            title: 'Out for Delivery',
+            description: 'Package in final transit to delivery location.',
+            timestamp: 'Pending',
+            completed: false,
+            current: false,
+          },
+          {
+            status: 'delivered',
+            title: 'Delivered',
+            description: 'Package handed over with digital proof.',
+            timestamp: 'Pending',
+            completed: false,
+            current: false,
+          },
+        ],
+      };
+
       setIsBooking(false);
       onOrderCreated(newOrder);
       onClose();
     }, 600);
   };
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 overflow-y-auto">
@@ -311,7 +311,7 @@ export default function BookDeliveryModal({
                       type="tel"
                       value={senderPhone}
                       onChange={(e) => setSenderPhone(e.target.value)}
-                      placeholder="+1 (555) 000-0000"
+                      placeholder="0803 456 7890"
                       className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
                     />
                   </div>
@@ -324,20 +324,20 @@ export default function BookDeliveryModal({
                       type="text"
                       value={pickupAddress}
                       onChange={(e) => setPickupAddress(e.target.value)}
-                      placeholder="742 Evergreen Terrace"
+                      placeholder="14 Admiralty Way, Lekki Phase 1"
                       className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
                     />
                   </div>
 
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">
-                      Suite / Apt
+                      Suite / Flat / Floor
                     </label>
                     <input
                       type="text"
                       value={pickupApt}
                       onChange={(e) => setPickupApt(e.target.value)}
-                      placeholder="Suite 4B"
+                      placeholder="Block B, Flat 4"
                       className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
                     />
                   </div>
@@ -350,7 +350,7 @@ export default function BookDeliveryModal({
                       type="text"
                       value={pickupCity}
                       onChange={(e) => setPickupCity(e.target.value)}
-                      placeholder="Austin, TX"
+                      placeholder="Lagos"
                       className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
                     />
                   </div>
@@ -363,7 +363,7 @@ export default function BookDeliveryModal({
                       type="text"
                       value={pickupPostal}
                       onChange={(e) => setPickupPostal(e.target.value)}
-                      placeholder="78701"
+                      placeholder="105102"
                       className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
                     />
                   </div>
@@ -420,12 +420,12 @@ export default function BookDeliveryModal({
                   <button
                     type="button"
                     onClick={() => {
-                      setReceiverName('David Sterling');
-                      setReceiverPhone('+1 (555) 612-4491');
-                      setDeliveryAddress('1850 North Harwood St');
-                      setDeliveryApt('Apt 1201');
-                      setDeliveryCity('Dallas, TX');
-                      setDeliveryPostal('75201');
+                      setReceiverName('Tunde Balogun');
+                      setReceiverPhone('0814 555 1234');
+                      setDeliveryAddress('28 Isaac John Street, GRA');
+                      setDeliveryApt('Suite 2A');
+                      setDeliveryCity('Ikeja, Lagos');
+                      setDeliveryPostal('100271');
                       setPackageDesc('Architectural Plans & Document Folder');
                     }}
                     className="text-xs text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
@@ -443,7 +443,7 @@ export default function BookDeliveryModal({
                       type="text"
                       value={receiverName}
                       onChange={(e) => setReceiverName(e.target.value)}
-                      placeholder="Receiver's Full Name"
+                      placeholder="e.g. Tunde Balogun"
                       className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
                     />
                   </div>
@@ -456,7 +456,7 @@ export default function BookDeliveryModal({
                       type="tel"
                       value={receiverPhone}
                       onChange={(e) => setReceiverPhone(e.target.value)}
-                      placeholder="+1 (555) 000-0000"
+                      placeholder="0814 555 1234"
                       className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
                     />
                   </div>
@@ -469,20 +469,20 @@ export default function BookDeliveryModal({
                       type="text"
                       value={deliveryAddress}
                       onChange={(e) => setDeliveryAddress(e.target.value)}
-                      placeholder="1850 North Harwood St"
+                      placeholder="28 Isaac John Street, GRA"
                       className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
                     />
                   </div>
 
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">
-                      Apartment / Suite
+                      Apartment / Suite / Office
                     </label>
                     <input
                       type="text"
                       value={deliveryApt}
                       onChange={(e) => setDeliveryApt(e.target.value)}
-                      placeholder="Apt 1201"
+                      placeholder="Suite 2A"
                       className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
                     />
                   </div>
@@ -495,7 +495,7 @@ export default function BookDeliveryModal({
                       type="text"
                       value={deliveryCity}
                       onChange={(e) => setDeliveryCity(e.target.value)}
-                      placeholder="Dallas, TX"
+                      placeholder="Ikeja, Lagos"
                       className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
                     />
                   </div>
@@ -508,7 +508,7 @@ export default function BookDeliveryModal({
                       type="text"
                       value={deliveryInstructions}
                       onChange={(e) => setDeliveryInstructions(e.target.value)}
-                      placeholder="Call upon arrival, leave with concierge"
+                      placeholder="Call upon arrival, do not leave unattended"
                       className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
                     />
                   </div>
@@ -588,7 +588,7 @@ export default function BookDeliveryModal({
                       onChange={(e) => setIsFragile(e.target.checked)}
                       className="w-4 h-4 rounded border-gray-300 text-blue-600"
                     />
-                    <span>Fragile (+ $2.50)</span>
+                    <span>Fragile (+ ₦1,000)</span>
                   </label>
 
                   <label className="flex items-center gap-2 cursor-pointer w-full sm:w-auto">
@@ -618,10 +618,10 @@ export default function BookDeliveryModal({
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {[
-                    { id: 'card', label: 'Credit Card', icon: CreditCard },
-                    { id: 'apple_pay', label: 'Apple Pay', icon: Smartphone },
+                    { id: 'card', label: 'Debit / Card', icon: CreditCard },
                     { id: 'bank_transfer', label: 'Bank Transfer', icon: Building },
-                    { id: 'cod', label: 'Cash on Delivery', icon: DollarSign },
+                    { id: 'apple_pay', label: 'USSD / Mobile', icon: Smartphone },
+                    { id: 'cod', label: 'Cash / POS', icon: DollarSign },
                   ].map((m) => {
                     const Icon = m.icon;
                     return (
@@ -724,31 +724,31 @@ export default function BookDeliveryModal({
 
                 <div className="flex justify-between text-xs text-gray-600">
                   <span>Base Courier Fee</span>
-                  <span className="text-gray-900">${baseFare.toFixed(2)}</span>
+                  <span className="text-gray-900">₦{baseFare.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-xs text-gray-600">
                   <span>Route Distance Fee</span>
-                  <span className="text-gray-900">${distanceFare.toFixed(2)}</span>
+                  <span className="text-gray-900">₦{distanceFare.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-xs text-gray-600">
                   <span>Weight Surcharge ({packageWeight} kg)</span>
-                  <span className="text-gray-900">${weightFare.toFixed(2)}</span>
+                  <span className="text-gray-900">₦{weightFare.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-xs text-gray-600">
                   <span>Package Insurance</span>
-                  <span className="text-gray-900">${insurance.toFixed(2)}</span>
+                  <span className="text-gray-900">₦{insurance.toLocaleString()}</span>
                 </div>
 
                 {discountApplied > 0 && (
                   <div className="flex justify-between text-xs text-emerald-700 font-semibold">
                     <span>Promo Discount</span>
-                    <span>-${discountApplied.toFixed(2)}</span>
+                    <span>-₦{discountApplied.toLocaleString()}</span>
                   </div>
                 )}
 
                 <div className="border-t border-gray-200 pt-2 flex justify-between items-center text-sm font-bold text-gray-900">
                   <span>Total Due</span>
-                  <span className="text-base text-blue-700">${total.toFixed(2)}</span>
+                  <span className="text-base text-blue-700">₦{total.toLocaleString()}</span>
                 </div>
               </div>
             </div>
@@ -799,7 +799,7 @@ export default function BookDeliveryModal({
               ) : (
                 <>
                   <CheckCircle2 className="w-4 h-4" />
-                  <span>Pay ${total.toFixed(2)} & Confirm Delivery</span>
+                  <span>Pay ₦{total.toLocaleString()} & Confirm Delivery</span>
                 </>
               )}
             </button>

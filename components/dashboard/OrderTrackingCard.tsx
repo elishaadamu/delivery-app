@@ -101,7 +101,7 @@ export default function OrderTrackingCard({
     {
       status: 'out_for_delivery' as DeliveryStatus,
       title: 'Out for Delivery',
-      desc: 'Driver Marcus Vance on last-mile route',
+      desc: order.driver ? `Driver ${order.driver.name} on last-mile route` : 'Driver on last-mile route',
       time: '01:30 PM',
     },
     {
@@ -437,7 +437,7 @@ export default function OrderTrackingCard({
               </div>
               <div className="flex justify-between text-gray-600">
                 <span>Payment:</span>
-                <span className="font-semibold text-gray-900">${order.payment.total.toFixed(2)} ({order.payment.method.replace('_', ' ')})</span>
+                <span className="font-semibold text-gray-900">₦{order.payment.total.toLocaleString()} ({order.payment.method.replace('_', ' ')})</span>
               </div>
             </div>
 
