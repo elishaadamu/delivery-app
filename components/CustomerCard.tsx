@@ -61,11 +61,11 @@ export function CustomerCard({ profile, onProfileUpdate }: CustomerCardProps) {
     <>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Modern Corporate Logistics Account Card */}
-        <div className="lg:col-span-2 relative overflow-hidden rounded-2xl bg-[#0e1420] border border-slate-800/90 p-6 sm:p-7 shadow-xl">
+        <div className="lg:col-span-2 relative overflow-hidden rounded-2xl bg-[#0e1420] border border-slate-800/90 p-4 sm:p-6 lg:p-7 shadow-xl">
           {/* Top Row: Brand & Pass Tier */}
-          <div className="flex items-center justify-between mb-7 relative z-10">
+          <div className="flex flex-wrap sm:flex-nowrap items-start sm:items-center justify-between gap-3 mb-6 sm:mb-7 relative z-10">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700/70 flex items-center justify-center text-emerald-400">
+              <div className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700/70 flex items-center justify-center text-emerald-400 shrink-0">
                 <Wallet className="w-5 h-5" />
               </div>
               <div>
@@ -75,14 +75,14 @@ export function CustomerCard({ profile, onProfileUpdate }: CustomerCardProps) {
                   </span>
                   <span className="text-[11px] font-mono text-slate-400">SWIFT PASS</span>
                 </div>
-                <h3 className="text-base font-bold text-white tracking-tight mt-0.5">
+                <h3 className="text-sm sm:text-base font-bold text-white tracking-tight mt-0.5">
                   Swift Logistics Commercial Account
                 </h3>
               </div>
             </div>
 
             {/* Contactless / NFC Indicator */}
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 text-[11px] font-mono">
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 text-[11px] font-mono shrink-0">
               <span className="text-emerald-400">●</span>
               <span>ACTIVE</span>
             </div>
@@ -218,7 +218,7 @@ export function CustomerCard({ profile, onProfileUpdate }: CustomerCardProps) {
                   <label className="block text-xs font-semibold text-slate-300 mb-2">
                     Select Top-Up Amount (NGN)
                   </label>
-                  <div className="grid grid-cols-4 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     {[5000, 10000, 25000, 50000].map((amt) => (
                       <button
                         key={amt}

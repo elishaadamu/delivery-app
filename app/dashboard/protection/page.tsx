@@ -25,11 +25,11 @@ export default function ProtectionPage() {
     <div className="space-y-8 animate-fade-in">
       {/* Page Title */}
       <div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
             Cargo Protection & Transit Indemnity
           </h1>
-          <span className="text-xs px-2.5 py-0.5 rounded-md bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 font-semibold font-mono">
+          <span className="text-xs px-2.5 py-0.5 rounded-md bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 font-semibold font-mono shrink-0">
             ₦2.5M Standard Coverage
           </span>
         </div>
@@ -39,12 +39,12 @@ export default function ProtectionPage() {
       </div>
 
       {/* Main Coverage Hero Card */}
-      <div className="p-6 sm:p-8 rounded-2xl bg-[#0e1420] border border-slate-800/90 shadow-xl space-y-4">
+      <div className="p-4 sm:p-8 rounded-2xl bg-[#0e1420] border border-slate-800/90 shadow-xl space-y-4">
         <div className="flex items-center gap-2 text-emerald-400 text-xs font-semibold uppercase tracking-wider">
           <CheckCircle2 className="w-4 h-4" />
           <span>Automated Transit Indemnity Guarantee</span>
         </div>
-        <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight font-sans tabular-nums">
+        <div className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight font-sans tabular-nums">
           ₦2,500,000 Coverage Included
         </div>
         <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-3xl">

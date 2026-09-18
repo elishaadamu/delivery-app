@@ -32,6 +32,7 @@ export default function DashboardOverviewPage() {
     handleOrderPaid,
     setIsBookModalOpen,
     setIsScannerOpen,
+    openSupportWithPrompt,
   } = useDashboard();
 
   const [showWelcomeBanner, setShowWelcomeBanner] = useState(false);
@@ -192,7 +193,7 @@ export default function DashboardOverviewPage() {
           order={selectedOrder}
           customer={user}
           onStatusChange={handleStatusChange}
-          onOpenChatSupport={() => {}}
+          onOpenChatSupport={openSupportWithPrompt}
           onOrderPaid={handleOrderPaid}
         />
       )}
@@ -240,12 +241,12 @@ export default function DashboardOverviewPage() {
                       <span>•</span>
                       <span>{ord.receiver.fullName}</span>
                     </div>
-                    <div className="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
+                    <div className="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5 truncate max-w-[180px] sm:max-w-md">
                       <span>{ord.sender.city}</span>
                       <span>&rarr;</span>
                       <span>{ord.receiver.city}</span>
                       <span className="text-slate-600">•</span>
-                      <span>{ord.packageInfo.description}</span>
+                      <span className="truncate">{ord.packageInfo.description}</span>
                     </div>
                   </div>
                 </div>

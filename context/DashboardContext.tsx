@@ -21,6 +21,10 @@ interface DashboardContextType {
   setIsScannerOpen: (open: boolean) => void;
   isPinModalOpen: boolean;
   setIsPinModalOpen: (open: boolean) => void;
+  isSupportOpen: boolean;
+  setIsSupportOpen: (open: boolean) => void;
+  supportInitialPrompt?: string;
+  openSupportWithPrompt: (prompt?: string) => void;
   toastMessage: string;
   showToast: (msg: string) => void;
   handleStatusChange: (orderId: string, newStatus: DeliveryStatus) => void;
@@ -42,6 +46,8 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   const [isBookModalOpen, setIsBookModalOpen] = useState(false);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [isPinModalOpen, setIsPinModalOpen] = useState(false);
+  const [isSupportOpen, setIsSupportOpen] = useState(false);
+  const [supportInitialPrompt, setSupportInitialPrompt] = useState<string | undefined>(undefined);
   const [toastMessage, setToastMessage] = useState('');
 
   useEffect(() => {
@@ -133,6 +139,13 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     showToast('Account successfully unlocked!');
   };
 
+  const openSupportWithPrompt = (prompt?: string) => {
+    if (prompt) {
+      setSupportInitialPrompt(prompt);
+    }
+    setIsSupportOpen(true);
+  };
+
   const activeOrdersCount = orders.filter((o) => o.status !== 'delivered').length;
 
   return (
@@ -159,6 +172,10 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
         setIsScannerOpen,
         isPinModalOpen,
         setIsPinModalOpen,
+        isSupportOpen,
+        setIsSupportOpen,
+        supportInitialPrompt,
+        openSupportWithPrompt,
         toastMessage,
         showToast,
         handleStatusChange,

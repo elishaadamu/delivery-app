@@ -98,11 +98,11 @@ export default function RecentOrdersTable({
         </div>
 
         {/* Filter Pills */}
-        <div className="flex items-center gap-1.5 text-xs">
+        <div className="flex items-center gap-1.5 text-xs overflow-x-auto pb-1 scrollbar-none max-w-full">
           <button
             type="button"
             onClick={() => setFilter('all')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 ${
               filter === 'all'
                 ? 'bg-emerald-500 text-black shadow-sm font-bold'
                 : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
@@ -113,7 +113,7 @@ export default function RecentOrdersTable({
           <button
             type="button"
             onClick={() => setFilter('active')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 ${
               filter === 'active'
                 ? 'bg-emerald-500 text-black shadow-sm font-bold'
                 : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
@@ -124,7 +124,7 @@ export default function RecentOrdersTable({
           <button
             type="button"
             onClick={() => setFilter('delivered')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 ${
               filter === 'delivered'
                 ? 'bg-emerald-500 text-black shadow-sm font-bold'
                 : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
@@ -147,8 +147,102 @@ export default function RecentOrdersTable({
         />
       </div>
 
-      {/* Orders Table Container */}
-      <div className="overflow-x-auto rounded-xl border border-slate-800/80">
+      {/* Mobile Orders Card View (Visible on screens < md) */}
+      <div className="block md:hidden space-y-3">
+        {filteredOrders.length === 0 ? (
+          <div className="py-10 text-center text-slate-500 text-xs">
+            No shipments matching your search filter.
+          </div>
+        ) : (
+          filteredOrders.map((ord) => {
+            const badge = getStatusBadge(ord.status);
+            const isSelected = ord.id === selectedOrderId || ord.trackingNumber === selectedOrderId;
+            const trackingNo = ord.trackingNumber || ord.id;
+            const payment = ord.payment || ord.paymentDetails || { total: 0, isPaid: false };
+
+            return (
+              <div
+                key={ord.id}
+                onClick={() => onSelectOrder(ord)}
+                className={`p-4 rounded-xl border transition-all cursor-pointer space-y-3 ${
+                  isSelected
+                    ? 'bg-emerald-950/20 border-emerald-500/80 shadow-md'
+                    : 'bg-slate-900/80 border-slate-800/80 hover:border-slate-700'
+                }`}
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <div className="font-mono font-bold text-sm text-emerald-400 flex items-center gap-1.5">
+                      <span>{trackingNo}</span>
+                      {isSelected && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      )}
+                    </div>
+                    <div className="text-[10px] text-slate-400 font-mono mt-0.5">
+                      Created {ord.createdAt}
+                    </div>
+                  </div>
+
+                  <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold border shrink-0 ${badge.style}`}>
+                    <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                    {badge.label}
+                  </span>
+                </div>
+
+                <div className="text-xs space-y-1 py-1 border-y border-slate-800/60">
+                  <div className="text-white font-semibold">
+                    {ord.receiver.fullName}
+                  </div>
+                  <div className="text-[11px] text-slate-400 flex items-center gap-1">
+                    <span>{ord.sender.city}</span>
+                    <span className="text-slate-600">&rarr;</span>
+                    <span className="text-white font-medium">{ord.receiver.city}</span>
+                    <span className="text-slate-600">•</span>
+                    <span className="truncate max-w-[140px] text-slate-300">{ord.packageInfo.description}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-1">
+                  <div>
+                    <div className="font-sans font-bold tabular-nums text-base text-white">
+                      ₦{payment.total.toLocaleString()}
+                    </div>
+                    <div className="text-[10px]">
+                      {payment.isPaid ? (
+                        <span className="text-emerald-400 font-medium">✓ Paid & Settled</span>
+                      ) : (
+                        <span className="text-amber-400 font-medium">Payment Pending</span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                    <button
+                      type="button"
+                      onClick={() => printOrderReceipt(ord, null)}
+                      title="Generate Tax Receipt PDF"
+                      className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-emerald-400 border border-slate-700 transition-colors"
+                    >
+                      <FileText className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onSelectOrder(ord)}
+                      className="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-semibold transition-all flex items-center gap-1 shadow-sm active:scale-95"
+                    >
+                      <span>Track</span>
+                      <ArrowUpRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Desktop Orders Table Container (Visible on md+) */}
+      <div className="hidden md:block overflow-x-auto rounded-xl border border-slate-800/80">
         <table className="w-full text-left text-xs border-collapse min-w-[700px]">
           <thead>
             <tr className="bg-slate-900/90 text-slate-400 border-b border-slate-800 font-semibold uppercase tracking-wider text-[11px]">

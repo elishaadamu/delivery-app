@@ -57,11 +57,11 @@ export default function TariffsPage() {
     <div className="space-y-8 animate-fade-in">
       {/* Page Title */}
       <div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
             Logistics Tariffs & Rate Calculator
           </h1>
-          <span className="text-xs px-2.5 py-0.5 rounded-md bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 font-semibold font-mono">
+          <span className="text-xs px-2.5 py-0.5 rounded-md bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 font-semibold font-mono shrink-0">
             Official FIRS 2026 Rates
           </span>
         </div>
@@ -138,10 +138,10 @@ export default function TariffsPage() {
               className="w-full accent-emerald-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"
             />
             <div className="flex justify-between text-[10px] text-slate-500 font-mono mt-1">
-              <span>0.5 KG (Document)</span>
-              <span>15 KG (Box)</span>
-              <span>30 KG (Crate)</span>
-              <span>50 KG (Freight)</span>
+              <span>0.5 KG <span className="hidden sm:inline">(Doc)</span></span>
+              <span>15 KG <span className="hidden sm:inline">(Box)</span></span>
+              <span>30 KG <span className="hidden sm:inline">(Crate)</span></span>
+              <span>50 KG <span className="hidden sm:inline">(Freight)</span></span>
             </div>
           </div>
 
@@ -182,24 +182,24 @@ export default function TariffsPage() {
           </div>
 
           {/* Cargo Protection Add-on */}
-          <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-900 border border-slate-800">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+          <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-900 border border-slate-800 gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
                 <ShieldCheck className="w-4 h-4" />
               </div>
-              <div>
-                <div className="text-xs font-semibold text-white">
+              <div className="min-w-0">
+                <div className="text-xs font-semibold text-white truncate sm:text-clip">
                   ₦2.5M Transit Indemnity Guarantee
                 </div>
-                <div className="text-[11px] text-slate-400">
-                  Full replacement value compensation against loss or damage (+₦ 1,500)
+                <div className="text-[11px] text-slate-400 leading-tight">
+                  Full replacement value compensation (+₦1,500)
                 </div>
               </div>
             </div>
             <button
               type="button"
               onClick={() => setIncludeInsurance(!includeInsurance)}
-              className={`w-6 h-6 rounded-md flex items-center justify-center border transition-all ${
+              className={`w-6 h-6 rounded-md flex items-center justify-center border transition-all shrink-0 ${
                 includeInsurance
                   ? 'bg-emerald-500 border-emerald-400 text-black'
                   : 'bg-slate-800 border-slate-700 text-transparent'
@@ -294,7 +294,39 @@ export default function TariffsPage() {
           </p>
         </div>
 
-        <div className="overflow-x-auto rounded-xl border border-slate-800/80">
+        {/* Mobile Route Cards (Visible on screens < sm) */}
+        <div className="block sm:hidden space-y-3">
+          {ROUTE_MATRIX.map((row, i) => (
+            <div
+              key={i}
+              className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2.5"
+            >
+              <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                <span className="truncate">{row.origin}</span>
+                <span className="text-slate-500">&rarr;</span>
+                <span className="text-emerald-400 truncate">{row.destination}</span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-800/80 text-xs">
+                <div>
+                  <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Ground Freight</span>
+                  <span className="font-sans font-bold text-white tabular-nums">{row.ground}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Air Priority</span>
+                  <span className="font-sans font-bold text-emerald-400 tabular-nums">{row.air}</span>
+                </div>
+              </div>
+
+              <div className="text-[10px] text-slate-400 font-mono pt-1 border-t border-slate-800/50">
+                SLA: {row.sla}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop Table (Visible on sm+) */}
+        <div className="hidden sm:block overflow-x-auto rounded-xl border border-slate-800/80">
           <table className="w-full text-left text-xs border-collapse min-w-[650px]">
             <thead>
               <tr className="bg-slate-900/90 text-slate-400 border-b border-slate-800 font-semibold uppercase tracking-wider text-[10px]">

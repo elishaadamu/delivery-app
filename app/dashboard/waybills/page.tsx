@@ -29,11 +29,11 @@ export default function WaybillsPage() {
       {/* Page Title & Top Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
               Waybills & Consignments
             </h1>
-            <span className="text-xs px-2.5 py-0.5 rounded-md bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 font-semibold font-mono">
+            <span className="text-xs px-2.5 py-0.5 rounded-md bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 font-semibold font-mono shrink-0">
               {orders.length} Total
             </span>
           </div>
@@ -45,7 +45,7 @@ export default function WaybillsPage() {
         <button
           type="button"
           onClick={() => setIsBookModalOpen(true)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-black rounded-xl text-xs font-semibold active:scale-95 transition-all shadow-sm shrink-0"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-black rounded-xl text-xs font-semibold active:scale-95 transition-all shadow-sm w-full sm:w-auto shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>New Dispatch</span>

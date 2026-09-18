@@ -25,14 +25,14 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
     setIsScannerOpen,
     isPinModalOpen,
     setIsPinModalOpen,
+    isSupportOpen,
+    setIsSupportOpen,
+    supportInitialPrompt,
     toastMessage,
     handleOrderCreated,
     unlockSession,
     triggerLock,
   } = useDashboard();
-
-  const [isSupportOpen, setIsSupportOpen] = useState(false);
-  const [supportInitialPrompt, setSupportInitialPrompt] = useState<string | undefined>(undefined);
 
   const selectedOrder =
     orders.find((o) => o.id === selectedOrderId || o.trackingNumber === selectedOrderId) ||
@@ -64,7 +64,7 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
       />
 
       {/* Main Content View with generous bottom padding so floating controls never obscure table rows */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-32">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 pb-32 overflow-x-hidden">
         {children}
       </main>
 

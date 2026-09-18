@@ -100,10 +100,10 @@ export default function ChatSupportWidget({
   }, [initialMessagePrompt, sendMessage]);
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end">
+    <div className="fixed bottom-3 right-3 sm:bottom-5 sm:right-5 z-50 flex flex-col items-end max-w-[calc(100vw-1.5rem)] pointer-events-auto">
       {/* Expanded Support Card */}
       {isOpen && (
-        <div className="mb-3 w-[350px] sm:w-[390px] bg-[#0f172a] border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[520px] text-slate-100 animate-fade-in">
+        <div className="mb-3 w-[calc(100vw-1.5rem)] sm:w-[390px] max-w-[390px] bg-[#0f172a] border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[75vh] max-h-[520px] text-slate-100 animate-fade-in">
           {/* Header */}
           <div className="p-4 bg-[#0c1322] border-b border-slate-800 text-white flex items-center justify-between">
             <div className="flex items-center gap-2.5">
@@ -300,10 +300,11 @@ export default function ChatSupportWidget({
         type="button"
         onClick={onToggle}
         id="chat-support-floating-btn"
-        className="px-4 py-2.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-black flex items-center gap-2 shadow-xl shadow-emerald-500/25 active:scale-95 transition-all font-bold text-xs"
+        className="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-black flex items-center gap-1.5 sm:gap-2 shadow-xl shadow-emerald-500/25 active:scale-95 transition-all font-bold text-xs shrink-0"
       >
-        <MessageSquare className="w-4 h-4" />
-        <span>Concierge / WhatsApp</span>
+        <MessageSquare className="w-4 h-4 shrink-0" />
+        <span className="hidden sm:inline">Concierge / WhatsApp</span>
+        <span className="sm:hidden">Support</span>
       </button>
     </div>
   );

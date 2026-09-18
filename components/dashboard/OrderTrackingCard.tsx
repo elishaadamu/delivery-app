@@ -320,17 +320,17 @@ export default function OrderTrackingCard({
         </div>
 
         {/* Path Track with moving courier */}
-        <div className="my-2 px-2 sm:px-6">
+        <div className="my-2 px-1 sm:px-6">
           <div className="relative flex items-center justify-between">
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center shrink-0">
               <div className="w-8 h-8 rounded-full bg-slate-800 text-emerald-400 border border-slate-700 flex items-center justify-center">
                 <MapPin className="w-4 h-4" />
               </div>
               <span className="text-[11px] font-bold text-white mt-1">Origin</span>
-              <span className="text-[10px] text-slate-400">{order.sender.city}</span>
+              <span className="text-[10px] text-slate-400 max-w-[80px] sm:max-w-[130px] truncate text-center">{order.sender.city}</span>
             </div>
 
-            <div className="flex-1 mx-4 relative h-1.5 bg-slate-800 rounded-full">
+            <div className="flex-1 mx-2 sm:mx-4 relative h-1.5 bg-slate-800 rounded-full min-w-[60px]">
               <div
                 className="h-full bg-emerald-500 rounded-full transition-all duration-500"
                 style={{ width: `${currentConfig.progressPct}%` }}
@@ -347,7 +347,7 @@ export default function OrderTrackingCard({
               </div>
             </div>
 
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center shrink-0">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center border text-xs ${
                 order.status === 'delivered'
                   ? 'bg-emerald-500 text-black border-emerald-400 font-bold'
@@ -356,7 +356,7 @@ export default function OrderTrackingCard({
                 {order.status === 'delivered' ? <Check className="w-4 h-4 stroke-[3]" /> : <MapPin className="w-4 h-4" />}
               </div>
               <span className="text-[11px] font-bold text-white mt-1">Destination</span>
-              <span className="text-[10px] text-slate-400">{order.receiver.city}</span>
+              <span className="text-[10px] text-slate-400 max-w-[80px] sm:max-w-[130px] truncate text-center">{order.receiver.city}</span>
             </div>
           </div>
         </div>
@@ -419,14 +419,14 @@ export default function OrderTrackingCard({
               </div>
             </div>
 
-            <div className="mt-5 pt-4 border-t border-slate-800 flex items-center gap-2.5">
+            <div className="mt-5 pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-center gap-2.5">
               <button
                 type="button"
                 onClick={() => {
                   setCallAlert(true);
                   setTimeout(() => setCallAlert(false), 3000);
                 }}
-                className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold border border-slate-700 transition-all active:scale-95"
+                className="w-full sm:flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold border border-slate-700 transition-all active:scale-95"
               >
                 <Phone className="w-3.5 h-3.5 text-emerald-400" />
                 <span>Call Courier ({order.driver.phone})</span>
@@ -435,7 +435,7 @@ export default function OrderTrackingCard({
               <button
                 type="button"
                 onClick={() => onOpenChatSupport(`Inquiring about shipment ${trackingNo}`)}
-                className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold border border-slate-700 transition-all active:scale-95"
+                className="w-full sm:flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold border border-slate-700 transition-all active:scale-95"
               >
                 <MessageSquare className="w-3.5 h-3.5 text-blue-400" />
                 <span>Chat Concierge</span>
@@ -525,11 +525,11 @@ export default function OrderTrackingCard({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full sm:w-auto">
             <button
               type="button"
               onClick={handlePrintReceipt}
-              className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold border border-slate-700 active:scale-95 transition-all shadow-sm"
+              className="inline-flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold border border-slate-700 active:scale-95 transition-all shadow-sm w-full sm:w-auto"
             >
               <FileText className="w-4 h-4 text-emerald-400" />
               <span>Tax Receipt PDF</span>
@@ -540,7 +540,7 @@ export default function OrderTrackingCard({
                 type="button"
                 disabled={isPaying}
                 onClick={handleProcessPayment}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-semibold active:scale-95 transition-all shadow-sm"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-semibold active:scale-95 transition-all shadow-sm w-full sm:w-auto"
               >
                 {isPaying ? (
                   <>

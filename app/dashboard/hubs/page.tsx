@@ -32,11 +32,11 @@ export default function HubsPage() {
     <div className="space-y-8 animate-fade-in">
       {/* Page Title */}
       <div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
             Nationwide Hubs & 24/7 Smart Lockers
           </h1>
-          <span className="text-xs px-2.5 py-0.5 rounded-md bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 font-semibold font-mono">
+          <span className="text-xs px-2.5 py-0.5 rounded-md bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 font-semibold font-mono shrink-0">
             {mockHubs.length} Active Stations
           </span>
         </div>
@@ -47,7 +47,7 @@ export default function HubsPage() {
 
       {/* Filter and Search Bar */}
       <div className="bg-[#0e1420] border border-slate-800/90 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           {/* Search Box */}
           <div className="relative w-full sm:max-w-md">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
@@ -61,13 +61,13 @@ export default function HubsPage() {
           </div>
 
           {/* City Filter Pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
+          <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0 scrollbar-none">
             {['All', 'Lagos', 'Abuja', 'Port Harcourt'].map((city) => (
               <button
                 key={city}
                 type="button"
                 onClick={() => setSelectedCity(city)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all shrink-0 ${
                   selectedCity === city
                     ? 'bg-emerald-500 text-black shadow-sm font-bold'
                     : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
@@ -81,7 +81,7 @@ export default function HubsPage() {
       </div>
 
       {/* Hubs Listing Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
         {filteredHubs.length === 0 ? (
           <div className="col-span-full py-16 text-center text-slate-500 text-xs">
             No distribution stations found matching &quot;{searchTerm}&quot;.
@@ -144,7 +144,7 @@ export default function HubsPage() {
       </div>
 
       {/* Contactless Smart Locker Explainer Guide */}
-      <div className="bg-[#0e1420] border border-slate-800/90 rounded-2xl p-6 sm:p-7 shadow-xl space-y-5">
+      <div className="bg-[#0e1420] border border-slate-800/90 rounded-2xl p-4 sm:p-7 shadow-xl space-y-5">
         <div>
           <span className="text-[11px] font-semibold uppercase tracking-wider text-emerald-400">
             How Contactless Pickup Works
