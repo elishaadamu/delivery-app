@@ -13,13 +13,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://swiftdrop.ng"),
+  metadataBase: new URL("https://swiftlogistics.ng"),
   title: {
-    default: "SwiftDrop Express | On-Demand Courier & Fast Delivery Nigeria",
-    template: "%s | SwiftDrop Express",
+    default: "Swift Logistics Nigeria | VIP Priority Courier & Cargo Tracking",
+    template: "%s | Swift Logistics Nigeria",
   },
   description:
-    "Fast, reliable, and secure on-demand courier and package delivery service across Lagos, Abuja, Port Harcourt, and Nigeria. Book deliveries, track dispatch couriers live in real-time, and manage shipments with automated digital receipts.",
+    "Nigeria's leading VIP logistics network across Lagos, Abuja, Port Harcourt & Kano. Real-time GPS consignment tracking, ₦2.5M cargo indemnity protection, digital customer card, and official FIRS tax invoices.",
   keywords: [
     "delivery app nigeria",
     "courier service lagos",
@@ -27,13 +27,13 @@ export const metadata: Metadata = {
     "dispatch rider lagos",
     "express package delivery",
     "real-time order tracking",
-    "swiftdrop logistics",
+    "swift logistics nigeria",
     "parcel delivery ikeja lekki",
     "doorstep delivery nigeria",
   ],
-  authors: [{ name: "SwiftDrop Logistics", url: "https://swiftdrop.ng" }],
-  creator: "SwiftDrop Logistics Inc.",
-  publisher: "SwiftDrop Logistics Inc.",
+  authors: [{ name: "Swift Logistics Nigeria", url: "https://swiftlogistics.ng" }],
+  creator: "Swift Logistics Nigeria Limited",
+  publisher: "Swift Logistics Nigeria Limited",
   formatDetection: {
     email: false,
     address: false,
@@ -43,49 +43,25 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "SwiftDrop Express | Fast & Reliable Courier Delivery Across Nigeria",
+    title: "Swift Logistics Nigeria | Priority Express Courier & Consignment Tracking",
     description:
-      "Book on-demand deliveries, track couriers live with GPS precision, and experience effortless shipments across Lagos, Abuja, and nationwide.",
-    url: "https://swiftdrop.ng",
-    siteName: "SwiftDrop Express Logistics",
-    images: [
-      {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "SwiftDrop Express Delivery App - Live Courier Tracking Across Nigeria",
-      },
-    ],
+      "Real-time GPS consignment tracking, ₦2.5M transit protection, digital VIP customer cards, and official FIRS tax receipts across Lagos, Abuja, and nationwide.",
+    url: "https://swiftlogistics.ng",
+    siteName: "Swift Logistics Nigeria",
     locale: "en_NG",
     type: "website",
   },
-  twitter: {
-    card: "summary_large_image",
-    title: "SwiftDrop Express | Nigeria's Leading On-Demand Courier Service",
-    description:
-      "Reliable same-day package delivery with live GPS courier tracking across Lagos, Abuja, and nationwide.",
-    images: ["/og-image.jpg"],
-    creator: "@swiftdrop_ng",
-  },
-  icons: {
-    icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
-      { url: "/icon.jpg", sizes: "512x512", type: "image/jpeg" },
-    ],
-    shortcut: ["/favicon.svg"],
-    apple: [
-      { url: "/apple-icon.jpg", sizes: "180x180", type: "image/jpeg" },
-    ],
-  },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col bg-[#090d16] text-slate-100 selection:bg-emerald-500 selection:text-black">
+        {children}
+      </body>
     </html>
   );
 }

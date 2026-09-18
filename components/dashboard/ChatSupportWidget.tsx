@@ -37,9 +37,9 @@ export default function ChatSupportWidget({
   }, [messages, isTyping, isOpen]);
 
   const whatsappNumber = '2348034567890';
-  const orderRef = activeOrder ? `Order #${activeOrder.trackingNumber}` : 'my shipments';
+  const orderRef = activeOrder ? `Waybill #${activeOrder.trackingNumber || activeOrder.id}` : 'my shipments';
   const prefilledWhatsappText = encodeURIComponent(
-    `Hello SwiftDrop Support! I need assistance regarding ${orderRef}.`
+    `Hello Swift Logistics Support! I need concierge assistance regarding ${orderRef}.`
   );
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${prefilledWhatsappText}`;
 
@@ -59,21 +59,23 @@ export default function ChatSupportWidget({
     setIsTyping(true);
 
     setTimeout(() => {
-      let botResponse = "Thanks for reaching out! Our dispatch team is monitoring your delivery.";
+      let botResponse = "Thank you for reaching Swift Logistics. Our dispatch operations are actively monitoring your cargo.";
       const lower = clean.toLowerCase();
 
       if (lower.includes('where') || lower.includes('status') || lower.includes('driver')) {
         if (activeOrder) {
-          botResponse = `Order ${activeOrder.trackingNumber} is currently "${activeOrder.status.replace('_', ' ').toUpperCase()}". Your courier ${activeOrder.driver?.name || 'Babajide'} is scheduled to arrive around ${activeOrder.estimatedDelivery}.`;
+          botResponse = `Consignment ${activeOrder.trackingNumber || activeOrder.id} is currently "${activeOrder.status.replace('_', ' ').toUpperCase()}". Assigned courier ${activeOrder.driver?.name || 'Babajide Sanusi'} (${activeOrder.driver?.vehiclePlate || 'LAG-492-APP'}) is approaching with estimated arrival around ${activeOrder.estimatedDelivery}.`;
         } else {
-          botResponse = 'All your active deliveries are on schedule! You can view the live status right on your dashboard.';
+          botResponse = 'All your active shipments across Lagos, Abuja, Port Harcourt & Kano are on schedule! View the live telemetry track right on your dashboard.';
         }
       } else if (lower.includes('address') || lower.includes('change')) {
-        botResponse = 'To modify your delivery address while the courier is en route, please contact support via the WhatsApp tab or call the driver directly.';
-      } else if (lower.includes('proof') || lower.includes('receipt')) {
-        botResponse = 'Digital receipts and signature records are available once an order reaches the "Delivered" state. You can download the PDF receipt directly from your Orders History table.';
+        botResponse = 'To redirect your destination hub or update your gate pass instructions while the courier is en route, please contact support directly via WhatsApp or call our 24/7 hotline (+234 800 794 3853).';
+      } else if (lower.includes('receipt') || lower.includes('invoice') || lower.includes('tax')) {
+        botResponse = 'Official Nigerian FIRS Tax Invoices and stamped receipts are generated instantly! Click the "Official Tax Receipt PDF" button on your tracking card or in the waybills archive.';
+      } else if (lower.includes('claim') || lower.includes('insurance') || lower.includes('damage')) {
+        botResponse = 'All priority shipments are covered under our ₦2,500,000 Transit Indemnity Guarantee. To submit a claim, please quote your waybill number to claims@swiftlogistics.ng.';
       } else {
-        botResponse = `Understood! An agent has been alerted regarding ${orderRef}. You can also connect via WhatsApp for immediate live agent assistance.`;
+        botResponse = `Understood! A dispatch officer has been alerted regarding ${orderRef}. You can also switch to the WhatsApp tab for instant live concierge response.`;
       }
 
       const agentMsg: ChatMessage = {
@@ -99,56 +101,57 @@ export default function ChatSupportWidget({
 
   return (
     <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end">
-      
       {/* Expanded Support Card */}
       {isOpen && (
-        <div className="mb-3 w-[350px] sm:w-[380px] bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden flex flex-col h-[500px] text-gray-900">
-          
+        <div className="mb-3 w-[350px] sm:w-[390px] bg-[#0f172a] border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[520px] text-slate-100 animate-fade-in">
           {/* Header */}
-          <div className="p-3.5 bg-blue-600 text-white flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-md bg-white/20 flex items-center justify-center">
-                <Headphones className="w-4 h-4 text-white" />
+          <div className="p-4 bg-[#0c1322] border-b border-slate-800 text-white flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                <Headphones className="w-4 h-4" />
               </div>
               <div>
                 <h4 className="font-bold text-sm leading-tight">
-                  SwiftDrop Support
+                  Swift Concierge Support
                 </h4>
-                <p className="text-[11px] text-blue-100">Live Courier Assistance</p>
+                <p className="text-[10px] text-emerald-400 font-medium">24/7 Nationwide Response</p>
               </div>
             </div>
 
             <button
+              type="button"
               onClick={onToggle}
-              className="w-7 h-7 rounded text-white/80 hover:text-white flex items-center justify-center cursor-pointer"
+              className="w-7 h-7 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
           {/* Tab Selector */}
-          <div className="flex border-b border-gray-200 bg-gray-50 text-xs font-semibold">
+          <div className="flex border-b border-slate-800 bg-slate-900/90 text-xs font-bold">
             <button
+              type="button"
               onClick={() => setActiveSupportTab('livechat')}
-              className={`flex-1 py-2.5 flex items-center justify-center gap-1.5 transition-colors cursor-pointer ${
+              className={`flex-1 py-2.5 flex items-center justify-center gap-1.5 transition-colors ${
                 activeSupportTab === 'livechat'
-                  ? 'text-blue-600 border-b-2 border-blue-600 bg-white'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'text-emerald-400 border-b-2 border-emerald-500 bg-slate-900'
+                  : 'text-slate-400 hover:text-white'
               }`}
             >
               <MessageSquare className="w-3.5 h-3.5" />
-              <span>Live Chat</span>
+              <span>In-App Chat</span>
             </button>
 
             <button
+              type="button"
               onClick={() => setActiveSupportTab('whatsapp')}
-              className={`flex-1 py-2.5 flex items-center justify-center gap-1.5 transition-colors cursor-pointer ${
+              className={`flex-1 py-2.5 flex items-center justify-center gap-1.5 transition-colors ${
                 activeSupportTab === 'whatsapp'
-                  ? 'text-emerald-700 border-b-2 border-emerald-600 bg-white'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'text-emerald-400 border-b-2 border-emerald-500 bg-slate-900'
+                  : 'text-slate-400 hover:text-white'
               }`}
             >
-              <svg className="w-3.5 h-3.5 fill-current text-emerald-600" viewBox="0 0 24 24">
+              <svg className="w-3.5 h-3.5 fill-current text-emerald-400" viewBox="0 0 24 24">
                 <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z" />
               </svg>
               <span>WhatsApp Direct</span>
@@ -157,24 +160,24 @@ export default function ChatSupportWidget({
 
           {/* TAB 1: WHATSAPP DIRECT */}
           {activeSupportTab === 'whatsapp' && (
-            <div className="flex-1 p-5 flex flex-col justify-between space-y-4 bg-white text-center">
+            <div className="flex-1 p-5 flex flex-col justify-between space-y-4 bg-slate-950/70 text-center">
               <div className="space-y-3 my-auto">
-                <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mx-auto">
-                  <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
+                <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/10">
+                  <svg className="w-7 h-7 fill-current" viewBox="0 0 24 24">
                     <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z" />
                   </svg>
                 </div>
 
-                <h4 className="text-sm font-bold text-gray-900">Chat on WhatsApp</h4>
-                <p className="text-xs text-gray-600 leading-relaxed max-w-[260px] mx-auto">
-                  Direct connection with our logistics support team.
+                <h4 className="text-base font-bold text-white">Chat on WhatsApp</h4>
+                <p className="text-xs text-slate-400 leading-relaxed max-w-[260px] mx-auto">
+                  Instant real-time connection with our designated Lagos & Abuja logistics dispatch desk.
                 </p>
 
                 {activeOrder && (
-                  <div className="p-2.5 rounded-lg bg-gray-50 border border-gray-200 text-left text-xs space-y-0.5">
-                    <span className="text-[10px] text-gray-500 font-semibold uppercase">Active Delivery:</span>
-                    <div className="font-mono text-gray-900 font-semibold">{activeOrder.trackingNumber}</div>
-                    <div className="text-gray-600 text-[11px] truncate">
+                  <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-left text-xs space-y-1">
+                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Target Waybill:</span>
+                    <div className="font-mono text-emerald-400 font-bold">{activeOrder.trackingNumber || activeOrder.id}</div>
+                    <div className="text-slate-400 text-[11px] truncate">
                       {activeOrder.sender.city} &rarr; {activeOrder.receiver.city}
                     </div>
                   </div>
@@ -186,13 +189,13 @@ export default function ChatSupportWidget({
                   href={whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-2 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  className="w-full py-3 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 active:scale-95 transition-all"
                 >
                   <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
                     <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z" />
                   </svg>
                   <span>Open WhatsApp (+234 803 456 7890)</span>
-                  <ExternalLink className="w-3 h-3" />
+                  <ExternalLink className="w-3.5 h-3.5" />
                 </a>
               </div>
             </div>
@@ -200,10 +203,9 @@ export default function ChatSupportWidget({
 
           {/* TAB 2: IN-APP LIVE CHAT */}
           {activeSupportTab === 'livechat' && (
-            <div className="flex-1 flex flex-col justify-between overflow-hidden bg-white">
-              
+            <div className="flex-1 flex flex-col justify-between overflow-hidden bg-slate-950/60">
               {/* Message Feed */}
-              <div className="flex-1 p-3 overflow-y-auto space-y-2.5 text-xs">
+              <div className="flex-1 p-3.5 overflow-y-auto space-y-2.5 text-xs">
                 {messages.map((msg) => {
                   const isUser = msg.sender === 'user';
                   return (
@@ -212,26 +214,26 @@ export default function ChatSupportWidget({
                       className={`flex items-end gap-1.5 ${isUser ? 'justify-end' : 'justify-start'}`}
                     >
                       {!isUser && (
-                        <div className="w-6 h-6 rounded-full bg-gray-100 text-gray-700 flex items-center justify-center shrink-0">
+                        <div className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0">
                           <Bot className="w-3.5 h-3.5" />
                         </div>
                       )}
 
                       <div
-                        className={`max-w-[80%] p-2.5 rounded-lg ${
+                        className={`max-w-[82%] p-3 rounded-2xl ${
                           isUser
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-gray-100 text-gray-900'
+                            ? 'bg-emerald-500 text-black font-medium'
+                            : 'bg-slate-900 border border-slate-800 text-slate-200'
                         }`}
                       >
                         <p className="leading-relaxed">{msg.text}</p>
                         <div
                           className={`text-[9px] mt-1 flex items-center justify-end gap-1 ${
-                            isUser ? 'text-blue-100' : 'text-gray-400'
+                            isUser ? 'text-black/60 font-semibold' : 'text-slate-500'
                           }`}
                         >
                           <span>{msg.timestamp}</span>
-                          {isUser && <CheckCheck className="w-3 h-3 text-blue-100" />}
+                          {isUser && <CheckCheck className="w-3 h-3 text-black" />}
                         </div>
                       </div>
                     </div>
@@ -239,12 +241,12 @@ export default function ChatSupportWidget({
                 })}
 
                 {isTyping && (
-                  <div className="flex items-center gap-1.5 text-gray-500 text-xs">
-                    <div className="w-6 h-6 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center">
+                  <div className="flex items-center gap-1.5 text-slate-500 text-xs">
+                    <div className="w-6 h-6 rounded-lg bg-slate-800 text-emerald-400 flex items-center justify-center">
                       <Bot className="w-3 h-3" />
                     </div>
-                    <div className="bg-gray-100 px-2.5 py-1.5 rounded-lg text-gray-500">
-                      Typing...
+                    <div className="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl text-slate-400">
+                      Concierge typing...
                     </div>
                   </div>
                 )}
@@ -252,12 +254,13 @@ export default function ChatSupportWidget({
               </div>
 
               {/* Quick Prompt Chips */}
-              <div className="px-3 py-2 border-t border-gray-100 bg-gray-50 overflow-x-auto flex gap-1.5">
+              <div className="px-3 py-2 border-t border-slate-800/80 bg-slate-900/80 overflow-x-auto flex gap-1.5">
                 {cannedFaqs.map((faq, i) => (
                   <button
                     key={i}
+                    type="button"
                     onClick={() => sendMessage(faq)}
-                    className="px-2 py-1 rounded bg-white hover:bg-gray-100 border border-gray-200 text-[10px] text-gray-700 shrink-0 transition-colors cursor-pointer"
+                    className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-750 border border-slate-700/60 text-[10px] text-slate-300 hover:text-white shrink-0 transition-colors"
                   >
                     {faq}
                   </button>
@@ -270,39 +273,38 @@ export default function ChatSupportWidget({
                   e.preventDefault();
                   sendMessage(inputText);
                 }}
-                className="p-2 border-t border-gray-200 bg-white flex items-center gap-1.5"
+                className="p-2.5 border-t border-slate-800 bg-[#0c1322] flex items-center gap-2"
               >
                 <input
                   type="text"
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
-                  placeholder="Type a message..."
-                  className="flex-1 px-3 py-1.5 bg-white border border-gray-300 rounded-md text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
+                  placeholder="Ask concierge about your delivery..."
+                  className="flex-1 px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-emerald-500"
                 />
                 <button
                   type="submit"
                   disabled={!inputText.trim()}
-                  className="w-7 h-7 rounded-md bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white flex items-center justify-center transition-colors cursor-pointer"
+                  className="w-8 h-8 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 text-black flex items-center justify-center transition-all shadow-md active:scale-95"
                 >
                   <Send className="w-3.5 h-3.5" />
                 </button>
               </form>
             </div>
           )}
-
         </div>
       )}
 
       {/* Floating Trigger Button */}
       <button
+        type="button"
         onClick={onToggle}
         id="chat-support-floating-btn"
-        className="px-3.5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 transition-colors cursor-pointer shadow-sm"
+        className="px-4 py-2.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-black flex items-center gap-2 shadow-xl shadow-emerald-500/25 active:scale-95 transition-all font-bold text-xs"
       >
         <MessageSquare className="w-4 h-4" />
-        <span className="text-xs font-semibold">Chat Support / WhatsApp</span>
+        <span>Concierge / WhatsApp</span>
       </button>
-
     </div>
   );
 }

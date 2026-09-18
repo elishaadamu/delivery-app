@@ -1,18 +1,23 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   Truck,
   Eye,
   EyeOff,
-  XCircle,
   ArrowRight,
   Lock,
   Mail,
-  UserCheck,
+  Sparkles,
+  ShieldCheck,
+  CheckCircle2,
+  KeyRound,
 } from 'lucide-react';
+import { setUserSession, getUserSession, setLockStatus } from '@/lib/storage';
+import { initialCustomerProfile } from '@/lib/mockData';
+import { PinModal } from '@/components/PinModal';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -20,243 +25,251 @@ export default function LoginPage() {
   // Form states
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loginError, setLoginError] = useState('');
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [savedUser, setSavedUser] = useState(false);
+
+  useEffect(() => {
+    const existing = getUserSession();
+    if (existing) {
+      setSavedUser(true);
+      if (!email) {
+        setEmail(existing.email);
+      }
+    }
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError('');
 
-    if (!email.trim() || !email.includes('@')) {
-      setLoginError('Please enter a valid email address.');
+    if (!email.trim()) {
+      setLoginError('Please enter your email or Nigerian phone number.');
       return;
     }
     if (!password) {
-      setLoginError('Please enter your account password.');
+      setLoginError('Please enter your password.');
       return;
     }
 
     setIsSubmitting(true);
 
-    // Save session in localStorage if not already existing
-    try {
-      if (typeof window !== 'undefined') {
-        const stored = localStorage.getItem('swiftdrop_user');
-        if (!stored) {
-          const defaultUser = {
-            firstName: 'Chidinma',
-            lastName: 'Adeleke',
-            phone: '0803 456 7890',
-            email: email.trim().toLowerCase(),
-          };
-          localStorage.setItem('swiftdrop_user', JSON.stringify(defaultUser));
-        }
-      }
-    } catch {
-      // ignore
-    }
-
+    // Save/refresh session in localStorage (accept any credentials as requested)
     setTimeout(() => {
+      const existing = getUserSession();
+      const userProfile = existing || {
+        ...initialCustomerProfile,
+        email: email.trim(),
+        firstName: email.split('@')[0].replace('.', ' ').split(' ')[0] || 'Elisha',
+        lastName: email.split('@')[0].replace('.', ' ').split(' ')[1] || 'Adamu',
+      };
+      setUserSession(userProfile);
+      setLockStatus(false);
       setIsSubmitting(false);
       router.push('/dashboard');
-    }, 500);
+    }, 600);
   };
 
   const handleFillDemo = () => {
-    setEmail('chidinma.adeleke@example.com');
-    setPassword('DeliverFast#2026');
+    setEmail('elisha.adamu@swiftlogistics.ng');
+    setPassword('Swift#2026');
     setLoginError('');
   };
 
+  const handlePinSuccess = () => {
+    setShowPinModal(false);
+    const existing = getUserSession() || initialCustomerProfile;
+    setUserSession(existing);
+    setLockStatus(false);
+    router.push('/dashboard');
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col justify-between">
-      
+    <div className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col justify-between relative overflow-hidden">
+      {/* Background ambient lighting */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-b from-emerald-500/10 via-teal-500/5 to-transparent blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+
       {/* Navigation Header */}
-      <header className="w-full bg-white border-b border-gray-200 sticky top-0 z-30">
+      <header className="w-full bg-[#0c1322]/80 backdrop-blur-md border-b border-slate-800/80 sticky top-0 z-30">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">
-              <Truck className="w-4 h-4" />
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 p-0.5 shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+              <div className="w-full h-full bg-[#0b1322] rounded-[10px] flex items-center justify-center text-emerald-400">
+                <Truck className="w-4 h-4" />
+              </div>
             </div>
             <div>
-              <span className="font-bold text-base tracking-tight text-gray-900">
-                SwiftDrop <span className="text-xs text-gray-500 font-normal">Logistics</span>
-              </span>
+              <div className="flex items-center gap-1.5">
+                <span className="font-extrabold text-base tracking-tight text-white">
+                  Swift Logistics
+                </span>
+                <span className="text-[9px] font-bold text-emerald-400 bg-emerald-950/80 border border-emerald-500/30 px-1.5 py-0.2 rounded">
+                  NG
+                </span>
+              </div>
+              <div className="text-[10px] text-slate-400 font-mono leading-none">
+                Nigeria Nationwide Express
+              </div>
             </div>
           </Link>
 
-          <div className="flex items-center gap-4 text-sm">
-            <span className="text-gray-500 hidden sm:inline">Don&apos;t have an account?</span>
+          <div className="flex items-center gap-4 text-xs font-semibold">
+            <span className="text-slate-400 hidden sm:inline">New to Swift?</span>
             <Link
               href="/register"
-              className="text-blue-600 hover:text-blue-800 font-semibold"
+              className="text-emerald-400 hover:text-emerald-300 font-bold bg-emerald-950/50 border border-emerald-500/30 px-3.5 py-1.5 rounded-xl transition-all"
             >
-              Register &rarr;
+              Create Account &rarr;
             </Link>
           </div>
         </div>
       </header>
 
-      {/* Main Login Card Section */}
-      <main className="flex-1 flex items-center justify-center p-4 sm:p-6 my-6">
-        <div className="w-full max-w-md space-y-4">
-          
-          <div className="bg-white border border-gray-200 rounded-xl p-6 sm:p-8">
+      {/* Main Login Body */}
+      <main className="flex-1 flex items-center justify-center p-4 sm:p-6 my-8 relative z-10">
+        <div className="w-full max-w-md">
+          {/* Card */}
+          <div className="rounded-3xl bg-[#0f172a]/95 border border-slate-800 p-6 sm:p-8 shadow-2xl shadow-black/60 relative">
             
-            <div className="mb-6">
-              <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
-                Customer Sign In
+            {/* Header / Brand Badge */}
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full mb-3">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>GOLD VIP ACCESS PORTAL</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                Welcome Back
               </h1>
-              <p className="text-sm text-gray-500 mt-1">
-                Enter your customer credentials to access your dashboard and deliveries.
+              <p className="text-xs text-slate-400 mt-1">
+                Access your priority logistics console, digital card & live waybills
               </p>
             </div>
 
+            {/* Error banner */}
             {loginError && (
-              <div className="mb-5 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm flex items-center gap-2">
-                <XCircle className="w-4 h-4 shrink-0 text-red-500" />
+              <div className="mb-5 p-3.5 rounded-2xl bg-red-950/50 border border-red-500/40 text-red-300 text-xs flex items-center gap-2 animate-shake">
                 <span>{loginError}</span>
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-              
-              {/* Email Address Field */}
+            {/* Sign in form */}
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label htmlFor="email" className="block text-xs font-semibold text-gray-700 mb-1">
-                  Email Address <span className="text-red-500">*</span>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  Email Address or Phone
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                    <Mail className="w-4 h-4" />
-                  </div>
+                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                   <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    autoComplete="username"
-                    required
+                    type="text"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="chidinma.adeleke@example.com"
-                    className="w-full pl-9 pr-3.5 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-colors"
+                    placeholder="elisha.adamu@swiftlogistics.ng"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-xs focus:outline-none focus:border-emerald-500 transition-colors"
                   />
                 </div>
               </div>
 
-              {/* Password Field with Show/Hide Toggle */}
               <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label htmlFor="password" className="block text-xs font-semibold text-gray-700">
-                    Password <span className="text-red-500">*</span>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-xs font-semibold text-slate-300">
+                    Password
                   </label>
                   <button
                     type="button"
-                    onClick={() => alert('Password reset link simulated. For quick access, you can also use the "Fill Demo Credentials" button below.')}
-                    className="text-xs text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                    onClick={() => setShowPinModal(true)}
+                    className="text-[11px] text-emerald-400 hover:text-emerald-300 font-medium"
                   >
-                    Forgot password?
+                    Use PIN instead?
                   </button>
                 </div>
-
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                    <Lock className="w-4 h-4" />
-                  </div>
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                   <input
                     type={showPassword ? 'text' : 'password'}
-                    id="password"
-                    name="password"
-                    autoComplete="current-password"
-                    required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
-                    className="w-full pl-9 pr-10 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-colors"
+                    placeholder="Enter password (any password accepted)"
+                    className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-xs focus:outline-none focus:border-emerald-500 transition-colors"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 cursor-pointer"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
 
-              {/* Remember Me */}
-              <div className="flex items-center justify-between text-xs">
-                <label className="flex items-center gap-2 cursor-pointer text-gray-700">
-                  <input
-                    type="checkbox"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                    className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <span>Remember my login</span>
-                </label>
-              </div>
-
-              {/* Submit Button */}
-              <div className="pt-2">
-                <button
-                  type="submit"
-                  id="login-submit-btn"
-                  disabled={isSubmitting}
-                  className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
-                >
-                  {isSubmitting ? (
-                    <span>Signing In...</span>
-                  ) : (
-                    <>
-                      <span>Sign In to Dashboard</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </>
-                  )}
-                </button>
-              </div>
-
-              {/* Demo Fill Helper */}
-              <div className="pt-2">
-                <button
-                  type="button"
-                  onClick={handleFillDemo}
-                  className="w-full py-2 px-3 bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs font-medium rounded-lg border border-gray-200 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  <UserCheck className="w-3.5 h-3.5 text-blue-600" />
-                  <span>Fill Demo Credentials (Chidinma Adeleke)</span>
-                </button>
-              </div>
-
-              {/* Bottom Registration Prompt */}
-              <div className="pt-3 text-center text-xs text-gray-500 border-t border-gray-100">
-                New customer?{' '}
-                <Link href="/register" className="text-blue-600 hover:text-blue-800 font-semibold hover:underline">
-                  Create a customer account &rarr;
-                </Link>
-              </div>
-
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs shadow-lg shadow-emerald-500/20 active:scale-98 transition-all flex items-center justify-center gap-2 mt-2"
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                    <span>Signing in...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Sign In to Dashboard</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
             </form>
 
-          </div>
+            {/* Quick 4-Digit PIN Unlock Shortcut */}
+            <div className="mt-5 pt-5 border-t border-slate-800 text-center space-y-3">
+              <button
+                type="button"
+                onClick={() => setShowPinModal(true)}
+                className="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-850 text-slate-200 hover:text-white border border-slate-800 text-xs font-bold transition-all flex items-center justify-center gap-2"
+              >
+                <KeyRound className="w-4 h-4 text-amber-400" />
+                <span>Quick Unlock with 4-Digit PIN</span>
+              </button>
 
+              <button
+                type="button"
+                onClick={handleFillDemo}
+                className="text-[11px] text-slate-400 hover:text-emerald-400 transition-colors underline underline-offset-4"
+              >
+                Auto-fill Elisha Adamu Demo Credentials
+              </button>
+            </div>
+
+            {/* Guarantee callout */}
+            <div className="mt-6 p-3 rounded-2xl bg-emerald-950/40 border border-emerald-500/20 flex items-center gap-2.5 text-xs text-slate-300">
+              <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" />
+              <span>
+                Protected by <strong>₦2,500,000</strong> transit cargo guarantee.
+              </span>
+            </div>
+
+          </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 bg-white py-4 text-center text-xs text-gray-500">
-        <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>&copy; 2026 SwiftDrop Logistics Inc.</span>
-          <div className="flex items-center gap-4 text-gray-500">
-            <Link href="/register" className="hover:text-gray-900">Registration</Link>
-            <Link href="/dashboard" className="hover:text-gray-900">Customer Dashboard</Link>
-          </div>
-        </div>
+      <footer className="py-6 border-t border-slate-800/80 text-center text-xs text-slate-500">
+        <p>Swift Logistics Nigeria Limited • RC: 1892842 • FIRS TIN: 24891029-0001</p>
+        <p className="mt-1">Plot 14 Admiralty Way, Lekki Phase 1, Lagos, Nigeria</p>
       </footer>
 
+      {/* Security PIN Modal */}
+      <PinModal
+        isOpen={showPinModal}
+        onSuccess={handlePinSuccess}
+        onClose={() => setShowPinModal(false)}
+        title="Quick 4-Digit PIN Unlock"
+        subtitle="Enter your security PIN to jump straight into your dashboard"
+      />
     </div>
   );
 }

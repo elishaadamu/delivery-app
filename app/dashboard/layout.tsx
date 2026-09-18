@@ -26,10 +26,12 @@ export const metadata: Metadata = {
   },
 };
 
+import DashboardLayoutClient from '@/components/dashboard/DashboardLayoutClient';
+
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return <DashboardLayoutClient>{children}</DashboardLayoutClient>;
 }

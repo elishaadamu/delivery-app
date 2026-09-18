@@ -1,307 +1,272 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import DashboardHeader from '@/components/dashboard/DashboardHeader';
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { useDashboard } from '@/context/DashboardContext';
+import CustomerCard from '@/components/CustomerCard';
 import OrderTrackingCard from '@/components/dashboard/OrderTrackingCard';
-import RecentOrdersTable from '@/components/dashboard/RecentOrdersTable';
-import BookDeliveryModal from '@/components/dashboard/BookDeliveryModal';
-import ChatSupportWidget from '@/components/dashboard/ChatSupportWidget';
 import {
-  DeliveryOrder,
-  DeliveryStatus,
-  CustomerProfile,
-} from '@/types/delivery';
-import { initialCustomerProfile, sampleOrders } from '@/lib/mockData';
-import {
-  Truck,
+  QrCode,
+  Calculator,
+  Building2,
   ShieldCheck,
-  Clock,
   Plus,
+  ArrowRight,
+  Sparkles,
   X,
-  CheckCircle2,
+  FileText,
+  Clock,
+  MapPin,
+  Check,
 } from 'lucide-react';
+import { DeliveryStatus } from '@/types/delivery';
 
-function DashboardContent() {
-  const searchParams = useSearchParams();
-  const isNewUser = searchParams?.get('new_user') === 'true';
+export default function DashboardOverviewPage() {
+  const {
+    user,
+    setUser,
+    orders,
+    selectedOrderId,
+    setSelectedOrderId,
+    handleStatusChange,
+    handleOrderPaid,
+    setIsBookModalOpen,
+    setIsScannerOpen,
+  } = useDashboard();
 
-  // Customer Profile
-  const [user, setUser] = useState<CustomerProfile>(initialCustomerProfile);
-  const [showWelcomeBanner, setShowWelcomeBanner] = useState(isNewUser);
+  const [showWelcomeBanner, setShowWelcomeBanner] = useState(false);
 
-  // Orders state
-  const [orders, setOrders] = useState<DeliveryOrder[]>(sampleOrders);
-  const [selectedOrderId, setSelectedOrderId] = useState<string>(sampleOrders[0].id);
-
-  // Modals & Navigation
-  const [activeTab, setActiveTab] = useState<'overview' | 'orders'>('overview');
-  const [isBookModalOpen, setIsBookModalOpen] = useState(false);
-  const [isSupportOpen, setIsSupportOpen] = useState(false);
-  const [supportInitialPrompt, setSupportInitialPrompt] = useState<string | undefined>(undefined);
-
-  // Toast notification state
-  const [toastMessage, setToastMessage] = useState('');
-
-  // Load registered user from localStorage if present
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      try {
-        const stored = localStorage.getItem('swiftdrop_user');
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          if (parsed.firstName) {
-            setUser(parsed);
-            setShowWelcomeBanner(true);
-          }
-        }
-      } catch {
-        // ignore
-      }
-    }, 0);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const activeOrder = orders.find((o) => o.id === selectedOrderId) || orders[0];
-  const activeCount = orders.filter((o) => o.status !== 'delivered').length;
-  const deliveredCount = orders.filter((o) => o.status === 'delivered').length;
-
-  const handleStatusChange = (orderId: string, newStatus: DeliveryStatus) => {
-    setOrders((prev) =>
-      prev.map((ord) => {
-        if (ord.id !== orderId) return ord;
-        return {
-          ...ord,
-          status: newStatus,
-        };
-      })
-    );
-
-    const statusNames: Record<DeliveryStatus, string> = {
-      confirmed: 'Confirmed Order',
-      in_transit: 'In Transit',
-      out_for_delivery: 'Out for Delivery',
-      delivered: 'Delivered',
-    };
-
-    setToastMessage(`Status updated: ${statusNames[newStatus]}`);
-    setTimeout(() => setToastMessage(''), 2500);
-  };
-
-  const handleOrderCreated = (newOrder: DeliveryOrder) => {
-    setOrders((prev) => [newOrder, ...prev]);
-    setSelectedOrderId(newOrder.id);
-    setActiveTab('overview');
-    setToastMessage(`Order created: ${newOrder.trackingNumber}`);
-    setTimeout(() => setToastMessage(''), 3000);
-  };
-
-  const handleSelectOrder = (order: DeliveryOrder) => {
-    setSelectedOrderId(order.id);
-    setActiveTab('overview');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleReorder = () => {
-    setIsBookModalOpen(true);
-  };
-
-  const handleOpenChatSupport = (prompt?: string) => {
-    setSupportInitialPrompt(prompt);
-    setIsSupportOpen(true);
-  };
+  const selectedOrder =
+    orders.find((o) => o.id === selectedOrderId || o.trackingNumber === selectedOrderId) ||
+    orders[0];
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col justify-between pb-24">
-      
-      {/* Top Header */}
-      <DashboardHeader
-        user={user}
-        activeTab={activeTab}
-        setActiveTab={(t: string) => setActiveTab(t === 'orders' ? 'orders' : 'overview')}
-        onOpenBookDelivery={() => setIsBookModalOpen(true)}
-        activeOrdersCount={activeCount}
-      />
-
-      {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full space-y-5">
-        
-        {/* Toast Notification */}
-        {toastMessage && (
-          <div className="fixed top-20 right-5 z-50 p-3 rounded-lg bg-gray-900 text-white text-xs font-semibold shadow-md flex items-center gap-2">
-            <span>{toastMessage}</span>
-          </div>
-        )}
-
-        {/* Welcome Banner for Newly Registered Customers */}
-        {showWelcomeBanner && (
-          <div className="p-4 rounded-xl bg-blue-50 border border-blue-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+    <div className="space-y-8 animate-fade-in">
+      {/* Welcome Banner if enabled */}
+      {showWelcomeBanner && (
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#0e1420] border border-emerald-500/30 flex items-center justify-between gap-4 shadow-lg">
+          <div className="flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+              <Sparkles className="w-5 h-5" />
+            </div>
             <div>
-              <h3 className="text-sm font-bold text-gray-900">
-                Welcome, {user.firstName}!
-              </h3>
-              <p className="text-xs text-gray-600 mt-0.5">
-                Your customer account is ready. Book a new delivery or view your shipment statuses below.
+              <h4 className="text-sm font-bold text-white">
+                Welcome to Swift Logistics, {user.firstName}!
+              </h4>
+              <p className="text-xs text-slate-300 mt-0.5">
+                Your enterprise account is active with automatic ₦2.5M cargo indemnity protection on all shipments.
               </p>
             </div>
-
-            <div className="flex items-center gap-2 shrink-0">
-              <button
-                onClick={() => setIsBookModalOpen(true)}
-                className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-colors cursor-pointer"
-              >
-                + Book Delivery
-              </button>
-              <button
-                onClick={() => setShowWelcomeBanner(false)}
-                className="p-1 rounded text-gray-400 hover:text-gray-600 cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
           </div>
-        )}
+          <button
+            type="button"
+            onClick={() => setShowWelcomeBanner(false)}
+            className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center shrink-0 transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
-        {/* Summary Metrics Bar */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
-          
-          <div className="p-4 rounded-xl bg-white border border-gray-200">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-gray-500 uppercase">
-                Active Shipments
+      {/* Customer Corporate Card & Quick Stats */}
+      <CustomerCard
+        profile={user}
+        onProfileUpdate={(updated) => setUser(updated)}
+      />
+
+      {/* Quick Action Navigation Chips */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+        <button
+          type="button"
+          onClick={() => setIsBookModalOpen(true)}
+          className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-semibold transition-all shrink-0 active:scale-95 shadow-sm"
+        >
+          <Plus className="w-4 h-4" />
+          <span>New Dispatch</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setIsScannerOpen(true)}
+          className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-[#0e1420] hover:bg-slate-800 text-slate-200 hover:text-white border border-slate-800 text-xs font-medium transition-all shrink-0 active:scale-95 shadow-sm"
+        >
+          <QrCode className="w-4 h-4 text-emerald-400" />
+          <span>Scan Waybill / QR</span>
+        </button>
+
+        <Link
+          href="/dashboard/tariffs"
+          className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-[#0e1420] hover:bg-slate-800 text-slate-200 hover:text-white border border-slate-800 text-xs font-medium transition-all shrink-0 active:scale-95 shadow-sm"
+        >
+          <Calculator className="w-4 h-4 text-amber-400" />
+          <span>Tariff Calculator</span>
+        </Link>
+
+        <Link
+          href="/dashboard/hubs"
+          className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-[#0e1420] hover:bg-slate-800 text-slate-200 hover:text-white border border-slate-800 text-xs font-medium transition-all shrink-0 active:scale-95 shadow-sm"
+        >
+          <Building2 className="w-4 h-4 text-blue-400" />
+          <span>24/7 Smart Lockers</span>
+        </Link>
+
+        <Link
+          href="/dashboard/protection"
+          className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-[#0e1420] hover:bg-slate-800 text-slate-200 hover:text-white border border-slate-800 text-xs font-medium transition-all shrink-0 active:scale-95 shadow-sm"
+        >
+          <ShieldCheck className="w-4 h-4 text-emerald-400" />
+          <span>₦2.5M Protection Policy</span>
+        </Link>
+      </div>
+
+      {/* Active Waybills Selector Bar */}
+      <div className="space-y-3.5">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+              <span>Active Consignments</span>
+              <span className="text-xs px-2 py-0.5 rounded-md bg-slate-900 border border-slate-800 text-emerald-400 font-mono">
+                {orders.length} Waybills
               </span>
-              <Truck className="w-4 h-4 text-blue-600" />
-            </div>
-            <div className="text-2xl font-bold text-gray-900 mt-1">
-              {activeCount}
-            </div>
-            <span className="text-[11px] text-gray-500">In transit or out for delivery</span>
+            </h3>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Select a consignment to inspect live route checkpoints and digital invoices.
+            </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-white border border-gray-200">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-gray-500 uppercase">
-                Completed
-              </span>
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-            </div>
-            <div className="text-2xl font-bold text-gray-900 mt-1">
-              {deliveredCount}
-            </div>
-            <span className="text-[11px] text-gray-500">Delivered with proof</span>
-          </div>
-
-          <div className="p-4 rounded-xl bg-white border border-gray-200">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-gray-500 uppercase">
-                On-Time Rate
-              </span>
-              <Clock className="w-4 h-4 text-gray-500" />
-            </div>
-            <div className="text-2xl font-bold text-gray-900 mt-1">
-              99.4%
-            </div>
-            <span className="text-[11px] text-gray-500">Express delivery guarantee</span>
-          </div>
-
-          <div className="p-4 rounded-xl bg-white border border-gray-200">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-gray-500 uppercase">
-                Support
-              </span>
-              <ShieldCheck className="w-4 h-4 text-emerald-600" />
-            </div>
-            <div className="text-2xl font-bold text-emerald-700 mt-1">
-              Available 24/7
-            </div>
-            <span className="text-[11px] text-gray-500">WhatsApp & In-App Chat</span>
-          </div>
-
+          <Link
+            href="/dashboard/waybills"
+            className="inline-flex items-center gap-1 text-xs text-emerald-400 hover:text-emerald-300 font-semibold transition-colors"
+          >
+            <span>View All Records</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
 
-        {/* Tab 1: Overview & Active Tracking */}
-        {activeTab === 'overview' && (
-          <div className="space-y-5">
-            
-            {/* Active Order Tracking Component */}
-            {activeOrder && (
-              <OrderTrackingCard
-                order={activeOrder}
-                onStatusChange={handleStatusChange}
-                onOpenChatSupport={handleOpenChatSupport}
-              />
-            )}
+        {/* Waybills Pill Switcher */}
+        <div className="flex gap-2.5 overflow-x-auto pb-1 scrollbar-none">
+          {orders.map((ord) => {
+            const isSelected =
+              ord.id === selectedOrder.id || ord.trackingNumber === selectedOrder.trackingNumber;
+            const isDelivered = ord.status === 'delivered';
+            const trackingNo = ord.trackingNumber || ord.id;
 
-            {/* Quick Action Bar */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 rounded-xl bg-white border border-gray-200">
-              <div className="text-xs text-gray-600">
-                Ready to dispatch another parcel or urgent document?
-              </div>
-              <div className="flex items-center gap-2 w-full sm:w-auto">
-                <button
-                  onClick={() => setIsBookModalOpen(true)}
-                  className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 py-1.5 px-3.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-colors cursor-pointer"
+            return (
+              <button
+                key={ord.id}
+                type="button"
+                onClick={() => setSelectedOrderId(ord.id)}
+                className={`px-3.5 py-2.5 rounded-xl border text-left transition-all shrink-0 min-w-[210px] flex items-center justify-between gap-3 ${
+                  isSelected
+                    ? 'bg-emerald-950/40 border-emerald-500/80 text-white shadow-sm'
+                    : 'bg-[#0e1420] border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
+                }`}
+              >
+                <div>
+                  <div className="font-mono text-xs font-semibold text-emerald-400">
+                    {trackingNo}
+                  </div>
+                  <div className="text-[11px] text-slate-300 font-medium truncate max-w-[130px] mt-0.5">
+                    {ord.receiver.city}
+                  </div>
+                </div>
+
+                <span
+                  className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
+                    isDelivered
+                      ? 'bg-slate-800 text-slate-400 border border-slate-700'
+                      : 'bg-emerald-500 text-black font-semibold'
+                  }`}
                 >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>Book Delivery</span>
-                </button>
-                <button
-                  onClick={() => setActiveTab('orders')}
-                  className="flex-1 sm:flex-initial py-1.5 px-3.5 rounded-lg bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs font-semibold border border-gray-200 transition-colors cursor-pointer"
-                >
-                  View All Orders &rarr;
-                </button>
+                  {isDelivered ? 'Delivered' : 'Live'}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Live Interactive Tracking Card */}
+      {selectedOrder && (
+        <OrderTrackingCard
+          order={selectedOrder}
+          customer={user}
+          onStatusChange={handleStatusChange}
+          onOpenChatSupport={() => {}}
+          onOrderPaid={handleOrderPaid}
+        />
+      )}
+
+      {/* Recent Activity Snapshot & Link to Full Waybills Archive */}
+      <div className="bg-[#0e1420] border border-slate-800/90 rounded-2xl p-5 sm:p-6 shadow-xl space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-base font-bold text-white tracking-tight">
+              Recent Manifests Activity
+            </h3>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Latest consignments dispatched on your corporate profile.
+            </p>
+          </div>
+
+          <Link
+            href="/dashboard/waybills"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-850 text-emerald-400 border border-slate-800 text-xs font-semibold transition-all"
+          >
+            <span>Full Waybills Archive</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        <div className="divide-y divide-slate-800/60">
+          {orders.slice(0, 3).map((ord) => {
+            const trackingNo = ord.trackingNumber || ord.id;
+            const payment = ord.payment || ord.paymentDetails || { total: 0, isPaid: false };
+            const isDelivered = ord.status === 'delivered';
+
+            return (
+              <div
+                key={ord.id}
+                onClick={() => setSelectedOrderId(ord.id)}
+                className="py-3.5 flex items-center justify-between gap-4 cursor-pointer hover:bg-slate-900/40 -mx-2 px-2 rounded-lg transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400">
+                    <FileText className="w-4 h-4 text-emerald-400" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-white flex items-center gap-2">
+                      <span className="font-mono text-emerald-400">{trackingNo}</span>
+                      <span>•</span>
+                      <span>{ord.receiver.fullName}</span>
+                    </div>
+                    <div className="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
+                      <span>{ord.sender.city}</span>
+                      <span>&rarr;</span>
+                      <span>{ord.receiver.city}</span>
+                      <span className="text-slate-600">•</span>
+                      <span>{ord.packageInfo.description}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="text-right shrink-0">
+                  <div className="font-sans font-bold text-xs text-white tabular-nums">
+                    ₦{payment.total.toLocaleString()}
+                  </div>
+                  <span
+                    className={`text-[10px] font-semibold ${
+                      isDelivered ? 'text-emerald-400' : 'text-amber-400'
+                    }`}
+                  >
+                    {isDelivered ? 'Delivered' : 'In Transit'}
+                  </span>
+                </div>
               </div>
-            </div>
-
-            {/* Recent Orders List Summary */}
-            <RecentOrdersTable
-              orders={orders}
-              selectedOrderId={selectedOrderId}
-              onSelectOrder={handleSelectOrder}
-              onReorder={handleReorder}
-            />
-          </div>
-        )}
-
-        {/* Tab 2: Orders History */}
-        {activeTab === 'orders' && (
-          <div className="space-y-5">
-            <RecentOrdersTable
-              orders={orders}
-              selectedOrderId={selectedOrderId}
-              onSelectOrder={handleSelectOrder}
-              onReorder={handleReorder}
-            />
-          </div>
-        )}
-
-      </main>
-
-      {/* Book Delivery Modal */}
-      <BookDeliveryModal
-        isOpen={isBookModalOpen}
-        onClose={() => setIsBookModalOpen(false)}
-        user={user}
-        onOrderCreated={handleOrderCreated}
-      />
-
-      {/* Chat Support & WhatsApp Floating Widget */}
-      <ChatSupportWidget
-        activeOrder={activeOrder}
-        isOpen={isSupportOpen}
-        onToggle={() => setIsSupportOpen(!isSupportOpen)}
-        initialMessagePrompt={supportInitialPrompt}
-      />
-
+            );
+          })}
+        </div>
+      </div>
     </div>
-  );
-}
-
-export default function DashboardPage() {
-  return (
-    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center text-gray-600 text-sm">Loading SwiftDrop Dashboard...</div>}>
-      <DashboardContent />
-    </Suspense>
   );
 }

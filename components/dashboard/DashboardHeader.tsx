@@ -1,117 +1,234 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   Truck,
   Plus,
-  Bell,
+  LogOut,
+  Lock,
+  ShieldCheck,
+  Calculator,
+  Building2,
+  FileText,
+  Menu,
+  X,
+  LayoutDashboard,
 } from 'lucide-react';
 import { CustomerProfile } from '@/types/delivery';
+import { clearUserSession, setLockStatus } from '@/lib/storage';
 
 interface DashboardHeaderProps {
   user: CustomerProfile;
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
   onOpenBookDelivery: () => void;
+  onTriggerLock?: () => void;
   activeOrdersCount: number;
 }
 
 export default function DashboardHeader({
   user,
-  activeTab,
-  setActiveTab,
   onOpenBookDelivery,
+  onTriggerLock,
   activeOrdersCount,
 }: DashboardHeaderProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const handleSignOut = () => {
+    clearUserSession();
+    router.push('/');
+  };
+
+  const handleLock = () => {
+    setLockStatus(true);
+    if (onTriggerLock) {
+      onTriggerLock();
+    }
+  };
+
+  const navLinks = [
+    {
+      label: 'Overview & Tracking',
+      href: '/dashboard',
+      icon: LayoutDashboard,
+      badge: null,
+    },
+    {
+      label: 'Waybills History',
+      href: '/dashboard/waybills',
+      icon: FileText,
+      badge: activeOrdersCount > 0 ? activeOrdersCount : null,
+    },
+    {
+      label: 'Tariff Calculator',
+      href: '/dashboard/tariffs',
+      icon: Calculator,
+      badge: null,
+    },
+    {
+      label: 'Hubs & Lockers',
+      href: '/dashboard/hubs',
+      icon: Building2,
+      badge: null,
+    },
+    {
+      label: 'Cargo Protection',
+      href: '/dashboard/protection',
+      icon: ShieldCheck,
+      badge: null,
+    },
+  ];
+
   return (
-    <header className="sticky top-0 z-30 bg-white border-b border-gray-200 text-gray-900">
+    <header className="sticky top-0 z-30 bg-[#0c1322]/95 backdrop-blur-md border-b border-slate-800/80 text-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-4">
-          
           {/* Brand Logo & Name */}
-          <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">
+          <div className="flex items-center gap-6 xl:gap-8 shrink-0">
+            <Link href="/dashboard" className="flex items-center gap-2.5 group">
+              <div className="w-9 h-9 rounded-xl bg-emerald-500 text-black flex items-center justify-center font-bold shadow-sm transition-transform group-hover:scale-105">
                 <Truck className="w-4 h-4" />
               </div>
-              <span className="font-bold text-base tracking-tight text-gray-900">
-                SwiftDrop <span className="text-xs text-gray-500 font-normal">Express</span>
-              </span>
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <span className="font-bold text-base tracking-tight text-white">
+                    Swift Logistics
+                  </span>
+                  <span className="text-[9px] font-bold text-emerald-400 bg-emerald-950/80 border border-emerald-500/30 px-1.5 py-0.2 rounded">
+                    NG
+                  </span>
+                </div>
+                <div className="text-[10px] text-slate-400 font-mono leading-none">
+                  Lagos • Abuja • PHC
+                </div>
+              </div>
             </Link>
 
-            {/* Navigation Tabs */}
-            <nav className="hidden md:flex items-center gap-1 text-sm font-medium">
-              <button
-                onClick={() => setActiveTab('overview')}
-                className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
-                  activeTab === 'overview'
-                    ? 'bg-blue-50 text-blue-700 font-semibold'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                }`}
-              >
-                Overview & Tracking
-              </button>
-              <button
-                onClick={() => setActiveTab('orders')}
-                className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 ${
-                  activeTab === 'orders'
-                    ? 'bg-blue-50 text-blue-700 font-semibold'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                }`}
-              >
-                <span>Orders History</span>
-                {activeOrdersCount > 0 && (
-                  <span className="text-[11px] bg-blue-600 text-white rounded-full px-1.5 py-0.2 font-semibold">
-                    {activeOrdersCount}
-                  </span>
-                )}
-              </button>
-              <Link
-                href="/register"
-                className="px-3 py-1.5 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
-              >
-                Registration Page
-              </Link>
+            {/* Desktop Navigation Links */}
+            <nav className="hidden lg:flex items-center gap-1 text-xs font-semibold">
+              {navLinks.map((item) => {
+                const isActive = pathname === item.href;
+                const Icon = item.icon;
+
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
+                      isActive
+                        ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                    }`}
+                  >
+                    <Icon className="w-3.5 h-3.5" />
+                    <span>{item.label}</span>
+                    {item.badge !== null && (
+                      <span className="text-[10px] bg-emerald-500 text-black font-extrabold rounded-full px-1.5 py-0.2 font-mono">
+                        {item.badge}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
             </nav>
           </div>
 
           {/* Right Action buttons & User Profile */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            {/* Book Dispatch Primary CTA */}
             <button
+              type="button"
               onClick={onOpenBookDelivery}
               id="book-delivery-top-btn"
-              className="flex items-center gap-1.5 px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-2 bg-emerald-500 hover:bg-emerald-400 text-black rounded-xl text-xs font-semibold active:scale-95 transition-all shadow-sm"
             >
               <Plus className="w-4 h-4" />
-              <span>Book Delivery</span>
+              <span className="hidden sm:inline">Book Dispatch</span>
+              <span className="sm:hidden">Book</span>
             </button>
 
-            {/* Notification Bell */}
+            {/* Quick PIN Lock button */}
             <button
-              aria-label="Notifications"
-              className="w-9 h-9 rounded-lg bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-gray-900 flex items-center justify-center border border-gray-200 transition-colors"
+              type="button"
+              onClick={handleLock}
+              title="Lock Screen with Security PIN"
+              className="w-9 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-amber-400 flex items-center justify-center border border-slate-800 transition-colors"
             >
-              <Bell className="w-4 h-4" />
+              <Lock className="w-4 h-4" />
             </button>
 
-            {/* User Profile */}
-            <div className="flex items-center gap-2.5 pl-2 border-l border-gray-200">
-              <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-800 font-semibold text-xs flex items-center justify-center">
-                {user.firstName[0] || 'U'}{user.lastName[0] || 'S'}
+            {/* User Profile Badge */}
+            <div className="flex items-center gap-2 pl-2 border-l border-slate-800">
+              <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-emerald-400 font-bold text-xs shrink-0">
+                {user.firstName ? user.firstName[0].toUpperCase() : 'E'}
               </div>
-              <div className="hidden lg:block text-left">
-                <div className="text-xs font-semibold text-gray-900">
+
+              <div className="hidden xl:block text-left max-w-[130px]">
+                <div className="text-xs font-semibold text-white truncate">
                   {user.firstName} {user.lastName}
                 </div>
-                <div className="text-[11px] text-gray-500 truncate max-w-[130px]">
-                  {user.phone}
+                <div className="text-[10px] text-slate-400 font-mono truncate">
+                  {user.membershipId || 'NG-7842-8920'}
                 </div>
               </div>
-            </div>
-          </div>
 
+              {/* Sign Out Button */}
+              <button
+                type="button"
+                onClick={handleSignOut}
+                title="Sign Out"
+                className="w-8 h-8 rounded-xl bg-slate-900 hover:bg-red-950/60 text-slate-400 hover:text-red-400 flex items-center justify-center border border-slate-800 hover:border-red-500/30 transition-colors shrink-0"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {/* Mobile Hamburger Menu Toggle */}
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white transition-colors"
+              aria-label="Toggle navigation menu"
+            >
+              {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Navigation Drawer */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden py-3 border-t border-slate-800/80 space-y-1 animate-fade-in">
+            {navLinks.map((item) => {
+              const isActive = pathname === item.href;
+              const Icon = item.icon;
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
+                    isActive
+                      ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-bold'
+                      : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Icon className="w-4 h-4 text-emerald-400" />
+                    <span>{item.label}</span>
+                  </div>
+                  {item.badge !== null && (
+                    <span className="text-[10px] bg-emerald-500 text-black font-extrabold rounded-full px-1.5 py-0.2 font-mono">
+                      {item.badge}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </div>
     </header>
   );
